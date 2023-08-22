@@ -1,0 +1,19 @@
+@buildgfortran
+option build --compiler gfortran --flag "-O2"
+
+@testgfortran
+option test --compiler gfortran --flag "-O2 -march=native -flto"
+
+
+@buildifort
+option build --compiler ifort --flag "-O3 -march=native"
+
+@testifort
+option test --compiler ifort --flag "-O3 -march=native"
+
+
+@buildifx
+option build --compiler ifx --flag "-O3 -march=native"
+
+@testifx
+option test --compiler ifx --flag "-O3 -march=native"
