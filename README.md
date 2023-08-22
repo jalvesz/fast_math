@@ -20,6 +20,10 @@ A collection of functions for fast number crunshing using Fortran.
 ## Other
 * fast erf
 
+# Auto-documentation
+Use [FORD](https://github.com/Fortran-FOSS-Programmers/ford) to create the documentation
+> ford doc\project_description.md
+
 # TODO
 * Contribution guidelines
 * Finalize naming convention
