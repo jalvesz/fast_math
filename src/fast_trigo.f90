@@ -1,3 +1,8 @@
+!
+! SPDX-FileCopyrightText: 2023 Transvalor S.A.
+!
+! SPDX-License-Identifier: MIT
+!
 module fast_trigo
     !! Source for fast sine cosine: http://web.archive.org/web/20141220225551/http://forum.devmaster.net/t/fast-and-accurate-sine-cosine/9648
     use iso_fortran_env
@@ -28,6 +33,7 @@ module fast_trigo
     end interface
     
     interface facos_nvidia
+    !! Source : https://developer.download.nvidia.com/cg/acos.html
         module procedure facos_nvidia_r32
         module procedure facos_nvidia_r64
     end interface
@@ -118,6 +124,10 @@ module fast_trigo
                 (2.4674011002723397_wp - xsq)
     end function
 
+    !====================================================
+    ! Inverse
+    !====================================================
+
     elemental function facos_r32( x ) result( y )
       integer, parameter :: wp = real32
       real(wp), intent(in) :: x
@@ -133,10 +143,6 @@ module fast_trigo
       !---------------------------------------------
       y =  (-0.69813170079773212_wp * x * x - 0.87266462599716477_wp) * x + 1.5707963267948966_wp;
     end function
-
-    !====================================================
-    ! Inverse
-    !====================================================
 
     elemental function  facos_nvidia_r32( x ) result( y )
         integer, parameter :: wp = real32

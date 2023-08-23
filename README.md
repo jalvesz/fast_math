@@ -1,5 +1,5 @@
 # Fortran Fast math
-A collection of functions for fast number crunshing using Fortran.
+A collection of functions for fast number crunching using Fortran.
 
 # Available functions
 

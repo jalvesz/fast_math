@@ -1,3 +1,8 @@
+!
+! SPDX-FileCopyrightText: 2023 Transvalor S.A.
+!
+! SPDX-License-Identifier: MIT
+!
 module fast_sum
   !! Two fast & accurate sum are proposed for 1D arrays:
   !! By default, "fsum" will use the fsum_chunk approach. This method is at worst, one order of magnitud more accurate that "sum" and between 1.5 to 10 times faster

@@ -1,5 +1,10 @@
+!
+! SPDX-FileCopyrightText: 2023 Transvalor S.A.
+!
+! SPDX-License-Identifier: MIT
+!
 module fast_tanh
-    !! !! Source: https://fortran-lang.discourse.group/t/fastgpt-faster-than-pytorch-in-300-lines-of-fortran/5385/31
+    !! Source: https://fortran-lang.discourse.group/t/fastgpt-faster-than-pytorch-in-300-lines-of-fortran/5385/31
     use iso_fortran_env
     implicit none
     private

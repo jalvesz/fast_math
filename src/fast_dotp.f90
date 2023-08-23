@@ -1,3 +1,8 @@
+!
+! SPDX-FileCopyrightText: 2023 Transvalor S.A.
+!
+! SPDX-License-Identifier: MIT
+!
 module fast_dotp
     !! A faster and more accurate implementation of the dot_product intrinsic. 
     !! It uses the same principle as fsum_chunk but considering local multiplications that can be vectorized for faster summation.
