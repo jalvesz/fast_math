@@ -20,9 +20,15 @@ A collection of functions for fast number crunching using Fortran.
 ## Other
 * fast erf
 
-# Auto-documentation
-Use [FORD](https://github.com/Fortran-FOSS-Programmers/ford) to create the documentation
-> ford doc\project_description.md
+# API documentation
+
+To generate the API documentation for `fast_math` using
+[ford](https://github.com/Fortran-FOSS-Programmers/ford) run the following
+command:
+
+```shell
+ford ford.yml
+```
 
 # TODO
 * Contribution guidelines
