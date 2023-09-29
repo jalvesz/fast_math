@@ -1,8 +1,8 @@
 @buildgfortran
-option build --compiler gfortran --flag "-O2"
+option build --compiler gfortran --flag "-O3 -march=native -flto"
 
 @testgfortran
-option test --compiler gfortran --flag "-O2 -march=native -flto"
+option test --compiler gfortran --flag "-O3 -march=native -flto"
 
 
 @buildifort
