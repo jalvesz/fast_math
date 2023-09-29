@@ -1,336 +1,497 @@
 module test_fast_math
-    use iso_fortran_env
+    use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
+    use testdrive, only: new_unittest, unittest_type, error_type, check
     use fast_math
     implicit none
-    contains
 
-    subroutine test_fast_sum()
-        integer, parameter :: n = 1e6, ncalc = 4, niter = 20
-        integer :: iter, i
-        real(real64) :: times(0:ncalc), times_tot(ncalc)
-        character (len=*), parameter :: fmt_cr = "(a10,*(f22.12))", fmt_er = "(a10,*(es22.4))"
-        !====================================================================================
-        call random_seed()
+    logical :: verbose = .true.
+    character (len=*), parameter :: fmt_cr = "(a10,*(f22.12))", fmt_er = "(a10,*(es22.4))"
+contains
+
+!> Collect all exported unit tests
+subroutine collect_suite(testsuite)
+    !> Collection of tests
+    type(unittest_type), allocatable, intent(out) :: testsuite(:)
+
+    testsuite = [ &
+        new_unittest('fast_sum', test_fast_sum) , &
+        new_unittest('fast_dotp', test_fast_dotproduct) , &
+        new_unittest('fast_trig', test_fast_trigonometry) &
+    ]
+end subroutine
+
+subroutine test_fast_sum(error)
+    !> Error handling
+    type(error_type), allocatable, intent(out) :: error
+
+    !> Internal parameters and variables
+    integer, parameter :: n = 1e6, ncalc = 4, niter = 20
+    integer :: iter, i
+    real(dp) :: times(0:ncalc), times_tot(ncalc)
+    !====================================================================================
+    call random_seed()
+    block
+        integer, parameter :: wp=sp
+        real(kind=wp), allocatable :: x(:)
+        real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        allocate(x(n))
+        call random_number(x)
+        x = (x - 0.5_wp)*2.0_wp
+        times_tot(:) = 0
+        meanval(:) = 0
+        err(:) = 0
+        do iter=1,niter
+            call cpu_time(times(0))
+            xsum(1) = sum(real(x, kind=wp*2)); call cpu_time(times(1))
+            xsum(2) = sum(x)       ; call cpu_time(times(2))
+            xsum(3) = fsum_pair(x) ; call cpu_time(times(3))
+            xsum(4) = fsum(x)      ; call cpu_time(times(4))
+            times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
+            meanval(1:ncalc) = meanval(1:ncalc) + xsum(1:ncalc)
+            err(2:ncalc) = err(2:ncalc) + abs( xsum(1) - xsum(2:ncalc) )
+        end do
+        meanval(1:ncalc) = meanval(1:ncalc) / niter
+        err(1:ncalc) = err(1:ncalc) / niter 
+
+        if(verbose)then
         print *,""
         print *,"================================================================"
         print *," SUM on single precision values "
-        block
-            integer, parameter :: wp=real32
-            real(kind=wp), allocatable :: x(:)
-            real(kind=wp) :: xsum(ncalc,niter), meanval(ncalc), err(ncalc)
-            allocate(x(n))
-            call random_number(x)
-            x = (x - 0.5_wp)*2.0_wp
-            times_tot(:) = 0
-            do iter=1,niter
-                call cpu_time(times(0))
-                xsum(1,iter) = sum(real(x, kind=wp*2)); call cpu_time(times(1))
-                xsum(2,iter) = sum(x)       ; call cpu_time(times(2))
-                xsum(3,iter) = fsum_pair(x) ; call cpu_time(times(3))
-                xsum(4,iter) = fsum(x)      ; call cpu_time(times(4))
-                times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
-            end do
-            meanval(:) = sum( xsum , dim = 2 ) / niter
-            do i = 1, ncalc
-                err(i) = sum( abs(xsum(i,:) - xsum(1,:)) ) / niter
-            end do
-            print "(/,a10,*(a22))", "", "sum_quad", "intrinsic", "fsum_pair", "fsum_chunk"
-            print fmt_cr,"Value: ", meanval(:)
-            print fmt_er,"Error: ", err(:)
-            print fmt_cr,"time : ", times_tot(1:ncalc) / niter
-        end block
+        print "(/,a10,*(a22))", "", "sum_quad", "intrinsic", "fsum_pair", "fsum_chunk"
+        print fmt_cr,"Value: ", meanval(:)
+        print fmt_er,"Error: ", abs(err(:)) / abs(meanval(:))
+        print fmt_cr,"time : ", times_tot(1:ncalc) / niter
+        end if
 
+        call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
+                        & .and. times_tot(ncalc) < times_tot(2) )
+        if (allocated(error)) return
+    end block
+
+    block
+        integer, parameter :: wp=sp
+        real(kind=wp), allocatable :: x(:),y(:)
+        logical, allocatable :: xmask(:)
+        real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        allocate(x(n),y(n),xmask(n))
+        call random_number(x)
+        x = (x - 0.5_wp)*2.0_wp
+        call random_number(y)
+        y = (y - 0.5_wp)*2.0_wp
+        xmask = abs(y) > 0.5_wp
+        times_tot(:) = 0
+        meanval(:) = 0
+        err(:) = 0
+        do iter=1,niter
+            call cpu_time(times(0))
+            xsum(1) = sum(real(x, kind=wp*2), mask=xmask); call cpu_time(times(1))
+            xsum(2) = sum(x, mask=xmask)       ; call cpu_time(times(2))
+            xsum(3) = fsum_pair(x, mask=xmask) ; call cpu_time(times(3))
+            xsum(4) = fsum(x, mask=xmask)      ; call cpu_time(times(4))
+            times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
+            meanval(1:ncalc) = meanval(1:ncalc) + xsum(1:ncalc)
+            err(2:ncalc) = err(2:ncalc) + abs( xsum(1) - xsum(2:ncalc) )
+        end do
+        meanval(1:ncalc) = meanval(1:ncalc) / niter
+        err(1:ncalc) = err(1:ncalc) / niter 
+
+        if(verbose)then
         print *,""
         print *,"================================================================"
         print *," SUM on single precision values with a mask"
-        block
-            integer, parameter :: wp=real32
-            real(kind=wp), allocatable :: x(:),y(:)
-            logical, allocatable :: xmask(:)
-            real(kind=wp) :: xsum(ncalc,niter), meanval(ncalc), err(ncalc)
-            allocate(x(n),y(n),xmask(n))
-            call random_number(x)
-            x = (x - 0.5_wp)*2.0_wp
-            call random_number(y)
-            y = (y - 0.5_wp)*2.0_wp
-            xmask = abs(y) > 0.5_wp
-            times_tot(:) = 0
-            do iter=1,niter
-                call cpu_time(times(0))
-                xsum(1,iter) = sum(real(x, kind=wp*2), mask=xmask); call cpu_time(times(1))
-                xsum(2,iter) = sum(x, mask=xmask)       ; call cpu_time(times(2))
-                xsum(3,iter) = fsum_pair(x, mask=xmask) ; call cpu_time(times(3))
-                xsum(4,iter) = fsum(x, mask=xmask)      ; call cpu_time(times(4))
-                times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
-            end do
-            meanval(:) = sum( xsum , dim = 2 ) / niter
-            do i = 1, ncalc
-                err(i) = sum( abs(xsum(i,:) - xsum(1,:)) ) / niter
-            end do
-            print "(/,a10,*(a22))", "", "sum_quad", "intrinsic", "fsum_pair", "fsum_chunk"
-            print fmt_cr,"Value: ", meanval(:)
-            print fmt_er,"Error: ", err(:)
-            print fmt_cr,"time : ", times_tot(1:ncalc) / niter
-        end block
+        print "(/,a10,*(a22))", "", "sum_quad", "intrinsic", "fsum_pair", "fsum_chunk"
+        print fmt_cr,"Value: ", meanval(:)
+        print fmt_er,"Error: ", abs(err(:)) / abs(meanval(:))
+        print fmt_cr,"time : ", times_tot(1:ncalc) / niter
+        end if
 
+        call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
+                        & .and. times_tot(ncalc) < times_tot(2) )
+        if (allocated(error)) return
+    end block
+
+    block
+        integer, parameter :: wp=dp
+        real(kind=wp), allocatable :: x(:)
+        real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        allocate(x(n))
+        call random_number(x)
+        x = (x - 0.5_wp)*2.0_wp
+        times_tot(:) = 0
+        meanval(:) = 0
+        err(:) = 0
+        do iter=1,niter
+            call cpu_time(times(0))
+            xsum(1) = sum(real(x, kind=wp*2)); call cpu_time(times(1))
+            xsum(2) = sum(x)       ; call cpu_time(times(2))
+            xsum(3) = fsum_pair(x) ; call cpu_time(times(3))
+            xsum(4) = fsum(x)      ; call cpu_time(times(4))
+            times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
+            meanval(1:ncalc) = meanval(1:ncalc) + xsum(1:ncalc)
+            err(2:ncalc) = err(2:ncalc) + abs( xsum(1) - xsum(2:ncalc) )
+        end do
+        meanval(1:ncalc) = meanval(1:ncalc) / niter
+        err(1:ncalc) = err(1:ncalc) / niter 
+
+        if(verbose)then
         print *,""
         print *,"================================================================"
         print *," SUM on double precision values "
-        block
-            integer, parameter :: wp=real64
-            real(kind=wp), allocatable :: x(:)
-            real(kind=wp) :: xsum(ncalc,niter), meanval(ncalc), err(ncalc)
-            allocate(x(n))
-            call random_number(x)
-            x = (x - 0.5_wp)*2.0_wp
-            times_tot(:) = 0
-            do iter=1,niter
-                call cpu_time(times(0))
-                xsum(1,iter) = sum(real(x, kind=wp*2)); call cpu_time(times(1))
-                xsum(2,iter) = sum(x)       ; call cpu_time(times(2))
-                xsum(3,iter) = fsum_pair(x) ; call cpu_time(times(3))
-                xsum(4,iter) = fsum(x)      ; call cpu_time(times(4))
-                times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
-            end do
-            meanval(:) = sum( xsum , dim = 2 ) / niter
-            do i = 1, ncalc
-                err(i) = sum( abs(xsum(i,:) - xsum(1,:)) ) / niter
-            end do
-            print "(/,a10,*(a22))", "", "sum_quad", "intrinsic", "fsum_pair", "fsum_chunk"
-            print fmt_cr,"Value: ", meanval(:)
-            print fmt_er,"Error: ", err(:)
-            print fmt_cr,"time : ", times_tot(1:ncalc) / niter
-        end block
+        print "(/,a10,*(a22))", "", "sum_quad", "intrinsic", "fsum_pair", "fsum_chunk"
+        print fmt_cr,"Value: ", meanval(:)
+        print fmt_er,"Error: ", abs(err(:)) / abs(meanval(:))
+        print fmt_cr,"time : ", times_tot(1:ncalc) / niter
+        end if
 
+        call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
+                        & .and. times_tot(ncalc) < times_tot(2) )
+        if (allocated(error)) return
+    end block
+
+    block
+        integer, parameter :: wp=dp
+        real(kind=wp), allocatable :: x(:),y(:)
+        logical, allocatable :: xmask(:)
+        real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        allocate(x(n),y(n),xmask(n))
+        call random_number(x)
+        x = (x - 0.5_wp)*2.0_wp
+        call random_number(y)
+        y = (y - 0.5_wp)*2.0_wp
+        xmask = abs(y) > 0.5_wp
+        times_tot(:) = 0
+        meanval(:) = 0
+        err(:) = 0
+        do iter=1,niter
+            call cpu_time(times(0))
+            xsum(1) = sum(real(x, kind=wp*2), mask=xmask); call cpu_time(times(1))
+            xsum(2) = sum(x, mask=xmask)       ; call cpu_time(times(2))
+            xsum(3) = fsum_pair(x, mask=xmask) ; call cpu_time(times(3))
+            xsum(4) = fsum(x, mask=xmask)      ; call cpu_time(times(4))
+            times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
+            meanval(1:ncalc) = meanval(1:ncalc) + xsum(1:ncalc)
+            err(2:ncalc) = err(2:ncalc) + abs( xsum(1) - xsum(2:ncalc) )
+        end do
+        meanval(1:ncalc) = meanval(1:ncalc) / niter
+        err(1:ncalc) = err(1:ncalc) / niter 
+
+        if(verbose)then
         print *,""
         print *,"================================================================"
         print *," SUM on double precision values with a mask"
-        block
-            integer, parameter :: wp=real64
-            real(kind=wp), allocatable :: x(:),y(:)
-            logical, allocatable :: xmask(:)
-            real(kind=wp) :: xsum(ncalc,niter), meanval(ncalc), err(ncalc)
-            allocate(x(n),y(n),xmask(n))
-            call random_number(x)
-            x = (x - 0.5_wp)*2.0_wp
-            call random_number(y)
-            y = (y - 0.5_wp)*2.0_wp
-            xmask = abs(y) > 0.5_wp
-            times_tot(:) = 0
-            do iter=1,niter
-                call cpu_time(times(0))
-                xsum(1,iter) = sum(real(x, kind=wp*2), mask=xmask); call cpu_time(times(1))
-                xsum(2,iter) = sum(x, mask=xmask)       ; call cpu_time(times(2))
-                xsum(3,iter) = fsum_pair(x, mask=xmask) ; call cpu_time(times(3))
-                xsum(4,iter) = fsum(x, mask=xmask)      ; call cpu_time(times(4))
-                times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
-            end do
-            meanval(:) = sum( xsum , dim = 2 ) / niter
-            do i = 1, ncalc
-                err(i) = sum( abs(xsum(i,:) - xsum(1,:)) ) / niter
-            end do
-            print "(/,a10,*(a22))", "", "sum_quad", "intrinsic", "fsum_pair", "fsum_chunk"
-            print fmt_cr,"Value: ", meanval(:)
-            print fmt_er,"Error: ", err(:)
-            print fmt_cr,"time : ", times_tot(1:ncalc) / niter
-        end block
-    end subroutine
+        print "(/,a10,*(a22))", "", "sum_quad", "intrinsic", "fsum_pair", "fsum_chunk"
+        print fmt_cr,"Value: ", meanval(:)
+        print fmt_er,"Error: ", abs(err(:)) / abs(meanval(:))
+        print fmt_cr,"time : ", times_tot(1:ncalc) / niter
+        end if 
 
-    subroutine test_fast_dotproduct()
-        integer, parameter :: n = 1e6, ncalc = 3, niter = 100
-        integer :: iter, i
-        real(real64) :: times(0:ncalc), times_tot(ncalc)
-        character (len=*), parameter :: fmt_cr = "(a10,*(f22.12))", fmt_er = "(a10,*(es22.4))"
-        !====================================================================================
-        call random_seed()
+        call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
+                        & .and. times_tot(ncalc) < times_tot(2) )
+        if (allocated(error)) return
+    end block
+
+end subroutine
+
+subroutine test_fast_dotproduct(error)
+    !> Error handling
+    type(error_type), allocatable, intent(out) :: error
+
+    !> Internal parameters and variables
+    integer, parameter :: n = 1e6, ncalc = 3, niter = 50
+    integer :: iter, i
+    real(dp) :: times(0:ncalc), times_tot(ncalc)
+    !====================================================================================
+    call random_seed()
+    block
+        integer, parameter :: wp=sp
+        real(kind=wp), allocatable :: x(:)
+        real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        allocate(x(n))
+        call random_number(x)
+        x = (x - 0.5_wp)*2.0_wp
+        times_tot(:) = 0
+        meanval(:) = 0
+        err(:) = 0
+        do iter=1,niter
+            call cpu_time(times(0))
+            xsum(1) = dot_product(real(x, kind=wp*2),real(x, kind=wp*2)) ; call cpu_time(times(1))
+            xsum(2) = dot_product(x,x) ; call cpu_time(times(2))
+            xsum(3) = fprod(x,x) ; call cpu_time(times(3))
+            times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
+            meanval(1:ncalc) = meanval(1:ncalc) + xsum(1:ncalc)
+            err(2:ncalc) = err(2:ncalc) + abs( xsum(1) - xsum(2:ncalc) )
+        end do
+        meanval(1:ncalc) = meanval(1:ncalc) / niter
+        err(1:ncalc) = err(1:ncalc) / niter 
+
+        if(verbose)then
         print *,""
         print *,"================================================================"
         print *," dot product on single precision values "
-        block
-            integer, parameter :: wp=real32
-            real(kind=wp), allocatable :: x(:)
-            real(kind=wp) :: xsum(ncalc,niter), meanval(ncalc), err(ncalc)
-            allocate(x(n))
-            call random_number(x)
-            x = (x - 0.5_wp)*2.0_wp
-            times_tot(:) = 0
-            do iter=1,niter
-                call cpu_time(times(0))
-                xsum(1,iter) = dot_product(real(x, kind=wp*2),real(x, kind=wp*2)) ; call cpu_time(times(1))
-                xsum(2,iter) = dot_product(x,x) ; call cpu_time(times(2))
-                xsum(3,iter) = fprod(x,x) ; call cpu_time(times(3))
-                times_tot(:) = times_tot(:) + ( times(1:ncalc) - times(0:ncalc-1) ) 
-            end do
-            meanval(:) = sum( xsum , dim = 2 ) / niter
-            do i = 1, ncalc
-                err(i) = sum( abs(xsum(i,:) - xsum(1,:)) ) / niter
-            end do
-            print "(/,a10,*(a22))", "", "quad" , "intrinsic", "fprod"
-            print fmt_cr,"Value: ", meanval(:)
-            print fmt_er,"Error: ", err(:)
-            print fmt_cr,"time : ", times_tot(1:ncalc) / niter
-        end block
+        print "(/,a10,*(a22))", "", "quad" , "intrinsic", "fprod"
+        print fmt_cr,"Value: ", meanval(:)
+        print fmt_er,"Error: ", abs(err(:)) / abs(meanval(:))
+        print fmt_cr,"time : ", times_tot(1:ncalc) / niter
+        end if
 
+        call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
+                        & .and. times_tot(ncalc) < times_tot(2) )
+        if (allocated(error)) return
+    end block
+
+    block
+        integer, parameter :: wp=dp
+        real(kind=wp), allocatable :: x(:)
+        real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        allocate(x(n))
+        call random_number(x)
+        x = (x - 0.5_wp)*2.0_wp
+        times_tot(:) = 0
+        meanval(:) = 0
+        err(:) = 0
+        do iter=1,niter
+            call cpu_time(times(0))
+            xsum(1) = dot_product(real(x, kind=wp*2),real(x, kind=wp*2)) ; call cpu_time(times(1))
+            xsum(2) = dot_product(x,x) ; call cpu_time(times(2))
+            xsum(3) = fprod(x,x) ; call cpu_time(times(3))
+            times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
+            meanval(1:ncalc) = meanval(1:ncalc) + xsum(1:ncalc)
+            err(2:ncalc) = err(2:ncalc) + abs( xsum(1) - xsum(2:ncalc) )
+        end do
+        meanval(1:ncalc) = meanval(1:ncalc) / niter
+        err(1:ncalc) = err(1:ncalc) / niter 
+
+        if(verbose)then
         print *,""
         print *,"================================================================"
         print *," dot product on double precision values "
-        block
-            integer, parameter :: wp=real64
-            real(kind=wp), allocatable :: x(:)
-            real(kind=wp) :: xsum(ncalc,niter), meanval(ncalc), err(ncalc)
-            allocate(x(n))
-            call random_number(x)
-            x = (x - 0.5_wp)*2.0_wp
-            times_tot(:) = 0
-            do iter=1,niter
-                call cpu_time(times(0))
-                xsum(1,iter) = dot_product(real(x, kind=wp*2),real(x, kind=wp*2)) ; call cpu_time(times(1))
-                xsum(2,iter) = dot_product(x,x) ; call cpu_time(times(2))
-                xsum(3,iter) = fprod(x,x) ; call cpu_time(times(3))
-                times_tot(:) = times_tot(:) + ( times(1:ncalc) - times(0:ncalc-1) ) 
-            end do
-            meanval(:) = sum( xsum , dim = 2 ) / niter
-            do i = 1, ncalc
-                err(i) = sum( abs(xsum(i,:) - xsum(1,:)) ) / niter
-            end do
-            print "(/,a10,*(a22))", "", "quad" , "intrinsic", "fprod"
-            print fmt_cr,"Value: ", meanval(:)
-            print fmt_er,"Error: ", err(:)
-            print fmt_cr,"time : ", times_tot(1:ncalc) / niter
-        end block
+        print "(/,a10,*(a22))", "", "quad" , "intrinsic", "fprod"
+        print fmt_cr,"Value: ", meanval(:)
+        print fmt_er,"Error: ", abs(err(:)) / abs(meanval(:))
+        print fmt_cr,"time : ", times_tot(1:ncalc) / niter
+        end if
 
+        call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
+                        & .and. times_tot(ncalc) < times_tot(2) )
+        if (allocated(error)) return
+    end block
+    
+    block
+        integer, parameter :: wp=sp
+        real(kind=wp), allocatable :: x(:)
+        real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        allocate(x(n))
+        call random_number(x)
+        x = (x - 0.5_wp)*2.0_wp
+        times_tot(:) = 0
+        meanval(:) = 0
+        err(:) = 0
+        do iter=1,niter
+            call cpu_time(times(0))
+            xsum(1) = dot_product(real(x, kind=wp*2),real(x, kind=wp*2)*real(x, kind=wp*2)) ; call cpu_time(times(1))
+            xsum(2) = dot_product(x,x*x) ; call cpu_time(times(2))
+            xsum(3) = fprod(x,x,x) ; call cpu_time(times(3))
+            times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
+            meanval(1:ncalc) = meanval(1:ncalc) + xsum(1:ncalc)
+            err(2:ncalc) = err(2:ncalc) + abs( xsum(1) - xsum(2:ncalc) )
+        end do
+        meanval(1:ncalc) = meanval(1:ncalc) / niter
+        err(1:ncalc) = err(1:ncalc) / niter 
+
+        if(verbose)then
         print *,""
         print *,"================================================================"
         print *," weigthed dot product on single precision values "
-        block
-            integer, parameter :: wp=real32
-            real(kind=wp), allocatable :: x(:)
-            real(kind=wp) :: xsum(ncalc,niter), meanval(ncalc), err(ncalc)
-            allocate(x(n))
-            call random_number(x)
-            x = (x - 0.5_wp)*2.0_wp
-            times_tot(:) = 0
-            do iter=1,niter
-                call cpu_time(times(0))
-                xsum(1,iter) = dot_product(real(x, kind=wp*2),real(x, kind=wp*2)*real(x, kind=wp*2)) ; call cpu_time(times(1))
-                xsum(2,iter) = dot_product(x,x*x) ; call cpu_time(times(2))
-                xsum(3,iter) = fprod(x,x,x) ; call cpu_time(times(3))
-                times_tot(:) = times_tot(:) + ( times(1:ncalc) - times(0:ncalc-1) ) 
-            end do
-            meanval(:) = sum( xsum , dim = 2 ) / niter
-            do i = 1, ncalc
-                err(i) = sum( abs(xsum(i,:) - xsum(1,:)) ) / niter
-            end do
-            print "(/,a10,*(a22))", "", "quad" , "intrinsic", "fprod"
-            print fmt_cr,"Value: ", meanval(:)
-            print fmt_er,"Error: ", err(:)
-            print fmt_cr,"time : ", times_tot(1:ncalc) / niter
-        end block
+        print "(/,a10,*(a22))", "", "quad" , "intrinsic", "fprod"
+        print fmt_cr,"Value: ", meanval(:)
+        print fmt_er,"Error: ", abs(err(:)) / abs(meanval(:))
+        print fmt_cr,"time : ", times_tot(1:ncalc) / niter
+        end if
 
+        call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
+                        & .and. times_tot(ncalc) < times_tot(2) )
+        if (allocated(error)) return
+    end block
+
+    block
+        integer, parameter :: wp=dp
+        real(kind=wp), allocatable :: x(:)
+        real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        allocate(x(n))
+        call random_number(x)
+        x = (x - 0.5_wp)*2.0_wp
+        times_tot(:) = 0
+        meanval(:) = 0
+        err(:) = 0
+        do iter=1,niter
+            call cpu_time(times(0))
+            xsum(1) = dot_product(real(x, kind=wp*2),real(x, kind=wp*2)*real(x, kind=wp*2)) ; call cpu_time(times(1))
+            xsum(2) = dot_product(x,x*x) ; call cpu_time(times(2))
+            xsum(3) = fprod(x,x,x) ; call cpu_time(times(3))
+            times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
+            meanval(1:ncalc) = meanval(1:ncalc) + xsum(1:ncalc)
+            err(2:ncalc) = err(2:ncalc) + abs( xsum(1) - xsum(2:ncalc) )
+        end do
+        meanval(1:ncalc) = meanval(1:ncalc) / niter
+        err(1:ncalc) = err(1:ncalc) / niter 
+
+        if(verbose)then
         print *,""
         print *,"================================================================"
         print *," weigthed dot product on double precision values "
-        block
-            integer, parameter :: wp=real64
-            real(kind=wp), allocatable :: x(:)
-            real(kind=wp) :: xsum(ncalc,niter), meanval(ncalc), err(ncalc)
-            allocate(x(n))
-            call random_number(x)
-            x = (x - 0.5_wp)*2.0_wp
-            times_tot(:) = 0
-            do iter=1,niter
-                call cpu_time(times(0))
-                xsum(1,iter) = dot_product(real(x, kind=wp*2),real(x, kind=wp*2)*real(x, kind=wp*2)) ; call cpu_time(times(1))
-                xsum(2,iter) = dot_product(x,x*x) ; call cpu_time(times(2))
-                xsum(3,iter) = fprod(x,x,x) ; call cpu_time(times(3))
-                times_tot(:) = times_tot(:) + ( times(1:ncalc) - times(0:ncalc-1) ) 
-            end do
-            meanval(:) = sum( xsum , dim = 2 ) / niter
-            do i = 1, ncalc
-                err(i) = sum( abs(xsum(i,:) - xsum(1,:)) ) / niter
-            end do
-            print "(/,a10,*(a22))", "", "quad" , "intrinsic", "fprod"
-            print fmt_cr,"Value: ", meanval(:)
-            print fmt_er,"Error: ", err(:)
-            print fmt_cr,"time : ", times_tot(1:ncalc) / niter
-        end block
-    end subroutine
+        print "(/,a10,*(a22))", "", "quad" , "intrinsic", "fprod"
+        print fmt_cr,"Value: ", meanval(:)
+        print fmt_er,"Error: ", abs(err(:)) / abs(meanval(:))
+        print fmt_cr,"time : ", times_tot(1:ncalc) / niter
+        end if
 
-    subroutine test_fast_trigonometry()
-        integer, parameter :: n = 1e7
-        real(real64) :: time(0:2), err
-        integer :: i
-        character (len=*), parameter :: fmt_cr = "(a10,*(f22.12))", fmt_er = "(a10,*(es22.4))"
-        !====================================================================================
+        call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
+                        & .and. times_tot(ncalc) < times_tot(2) )
+        if (allocated(error)) return
+    end block
+
+end subroutine
+
+subroutine test_fast_trigonometry(error)
+    !> Error handling
+    type(error_type), allocatable, intent(out) :: error
+
+    !> Internal parameters and variables
+    integer, parameter :: n = 1e6, ncalc = 2
+    integer :: i
+    real(dp) :: time(0:ncalc), err
+    !====================================================================================
+    if(verbose)then
         print *,""
         print *,"================================================================"
         print *," Fast trigonometric"
         print "(/,a10,*(a22))", "", "Error", "time intrinsic", "time fast", "Speed up"
-        block
-            integer, parameter :: wp = real32
-            real(wp), allocatable :: x(:) , y(:), yref(:)
-            ! -- define a linspace between [-pi,pi]
-            allocate( x(n) , y(n), yref(n) )
-            x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*acos(-1.0_wp) , i = 1, n) ]
+    end if
+    block
+        integer, parameter :: wp=sp
+        real(wp), allocatable :: x(:) , y(:), yref(:)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        !> define a linspace between [-pi,pi]
+        allocate( x(n) , y(n), yref(n) )
+        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*acos(-1.0_wp) , i = 1, n) ]
 
-            call cpu_time(time(0))
-            yref = sin(x); call cpu_time(time(1))
-            y = fsin(x)  ; call cpu_time(time(2))
+        call cpu_time(time(0))
+        yref = sin(x); call cpu_time(time(1))
+        y = fsin(x)  ; call cpu_time(time(2))
 
-            time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
-            err = sqrt( sum( y - yref )**2 / n )
-            
-            print fmt_er, "real32 sin", err, time(1), time(2), time(1)/time(2)
-        end block
-        block
-            integer, parameter :: wp = real64
-            real(wp), allocatable :: x(:) , y(:), yref(:)
-            ! -- define a linspace between [-pi,pi]
-            allocate( x(n) , y(n), yref(n) )
-            x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*acos(-1.0_wp) , i = 1, n) ]
+        time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
+        err = sqrt( sum( y - yref )**2 / n )
 
-            call cpu_time(time(0))
-            yref = sin(x); call cpu_time(time(1))
-            y = fsin(x)  ; call cpu_time(time(2))
+        if(verbose)then
+            print fmt_er, "sin r32", err, time(1), time(2), time(1)/time(2)
+        end if
 
-            time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
-            err = sqrt( sum( y - yref )**2 / n )
+        call check(error, err < tolerance .and. time(2) < time(1) )
+        if (allocated(error)) return
+    end block
+    block
+        integer, parameter :: wp=dp
+        real(wp), allocatable :: x(:) , y(:), yref(:)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        !> define a linspace between [-pi,pi]
+        allocate( x(n) , y(n), yref(n) )
+        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*acos(-1.0_wp) , i = 1, n) ]
 
-            print fmt_er, "real64 sin", err, time(1), time(2), time(1)/time(2)
-        end block
+        call cpu_time(time(0))
+        yref = sin(x); call cpu_time(time(1))
+        y = fsin(x)  ; call cpu_time(time(2))
 
-        block
-            integer, parameter :: wp = real32
-            real(wp), allocatable :: x(:) , y(:), yref(:)
-            ! -- define a linspace between [-1,1]
-            allocate( x(n) , y(n), yref(n) )
-            x(:) = [ ((real(i,kind=wp) / n - 0.5_wp)*2 , i = 1, n) ]
+        time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
+        err = sqrt( sum( y - yref )**2 / n )
 
-            call cpu_time(time(0))
-            yref = acos(x); call cpu_time(time(1))
-            y = facos(x)  ; call cpu_time(time(2))
+        if(verbose)then
+            print fmt_er, "sin r64", err, time(1), time(2), time(1)/time(2)
+        end if
 
-            time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
-            err = sqrt( sum( y - yref )**2 / n )
-            
-            print fmt_er, "real32 acos", err, time(1), time(2), time(1)/time(2)
-        end block
-        block
-            integer, parameter :: wp = real64
-            real(wp), allocatable :: x(:) , y(:), yref(:)
-            ! -- define a linspace between [-1,1]
-            allocate( x(n) , y(n), yref(n) )
-            x(:) = [ ((real(i,kind=wp) / n - 0.5_wp)*2 , i = 1, n) ]
+        call check(error, err < tolerance .and. time(2) < time(1) )
+        if (allocated(error)) return
+    end block
 
-            call cpu_time(time(0))
-            yref = acos(x); call cpu_time(time(1))
-            y = facos(x)  ; call cpu_time(time(2))
+    block
+        integer, parameter :: wp=sp
+        real(wp), allocatable :: x(:) , y(:), yref(:)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        !> define a linspace between [-1,1]
+        allocate( x(n) , y(n), yref(n) )
+        x(:) = [ ((real(i,kind=wp) / n - 0.5_wp)*2 , i = 1, n) ]
 
-            time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
-            err = sqrt( sum( y - yref )**2 / n )
+        call cpu_time(time(0))
+        yref = acos(x); call cpu_time(time(1))
+        y = facos(x)  ; call cpu_time(time(2))
 
-            print fmt_er, "real64 acos", err, time(1), time(2), time(1)/time(2)
-        end block
-    end subroutine
+        time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
+        err = sqrt( sum( y - yref )**2 / n )
 
-end module
+        if(verbose)then
+            print fmt_er, "acos r32", err, time(1), time(2), time(1)/time(2)
+        end if
+
+        call check(error, err < tolerance .and. time(2) < time(1) )
+        if (allocated(error)) return
+    end block
+    block
+        integer, parameter :: wp=dp
+        real(wp), allocatable :: x(:) , y(:), yref(:)
+        real(kind=wp) :: tolerance = epsilon(1._wp)*500
+        !> define a linspace between [-1,1]
+        allocate( x(n) , y(n), yref(n) )
+        x(:) = [ ((real(i,kind=wp) / n - 0.5_wp)*2 , i = 1, n) ]
+
+        call cpu_time(time(0))
+        yref = acos(x); call cpu_time(time(1))
+        y = facos(x)  ; call cpu_time(time(2))
+
+        time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
+        err = sqrt( sum( y - yref )**2 / n )
+
+        if(verbose)then
+            print fmt_er, "acos r64", err, time(1), time(2), time(1)/time(2)
+        end if
+
+        call check(error, err < tolerance .and. time(2) < time(1) )
+        if (allocated(error)) return
+    end block
+
+end subroutine
+    
+end module test_fast_math
+
+program tester
+    use, intrinsic :: iso_fortran_env, only : error_unit
+    use testdrive, only : run_testsuite, new_testsuite, testsuite_type
+    use test_fast_math, only : collect_suite
+    implicit none
+    integer :: stat, is
+    type(testsuite_type), allocatable :: testsuites(:)
+    character(len=*), parameter :: fmt = '("#", *(1x, a))'
+  
+    stat = 0
+  
+    testsuites = [ &
+      new_testsuite("fsparse", collect_suite) &
+      ]
+  
+    do is = 1, size(testsuites)
+      write(error_unit, fmt) "Testing:", testsuites(is)%name
+      call run_testsuite(testsuites(is)%collect, error_unit, stat)
+    end do
+  
+    if (stat > 0) then
+      write(error_unit, '(i0, 1x, a)') stat, "test(s) failed!"
+      error stop
+    end if
+  
+end program tester
