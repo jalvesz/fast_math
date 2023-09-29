@@ -4,7 +4,7 @@ module test_fast_math
     use fast_math
     implicit none
 
-    logical :: verbose = .true.
+    logical :: verbose = .false. ! change me to .true. if you want to see the results
     character (len=*), parameter :: fmt_cr = "(a10,*(f22.12))", fmt_er = "(a10,*(es22.4))"
 contains
 
