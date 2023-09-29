@@ -5,21 +5,21 @@
 !
 module fast_tanh
     !! Source: https://fortran-lang.discourse.group/t/fastgpt-faster-than-pytorch-in-300-lines-of-fortran/5385/31
-    use iso_fortran_env
+    use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
     implicit none
     private
     
     public :: ftanh
     
     interface ftanh
-        module procedure ftanh_r32
-        module procedure ftanh_r64
+        module procedure ftanh_sp
+        module procedure ftanh_dp
     end interface
     
     contains
     
-    elemental function ftanh_r32( x ) result( y )
-        integer, parameter :: wp = real32
+    elemental function ftanh_sp( x ) result( y )
+        integer, parameter :: wp = sp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
@@ -37,8 +37,8 @@ module fast_tanh
         end if
     end function
 
-    elemental function ftanh_r64( x ) result( y )
-        integer, parameter :: wp = real64
+    elemental function ftanh_dp( x ) result( y )
+        integer, parameter :: wp = dp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables

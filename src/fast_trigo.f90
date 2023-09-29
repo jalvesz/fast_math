@@ -5,7 +5,7 @@
 !
 module fast_trigo
     !! Source for fast sine cosine: http://web.archive.org/web/20141220225551/http://forum.devmaster.net/t/fast-and-accurate-sine-cosine/9648
-    use iso_fortran_env
+    use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
     implicit none
     private
     
@@ -13,55 +13,55 @@ module fast_trigo
     public :: facos, facos_nvidia
     
     interface fcos
-        module procedure fcos_r32
-        module procedure fcos_r64
+        module procedure fcos_sp
+        module procedure fcos_dp
     end interface
 
     interface fsin
-        module procedure fsin_r32
-        module procedure fsin_r64
+        module procedure fsin_sp
+        module procedure fsin_dp
     end interface
 
     interface ftan
-        module procedure ftan_r32
-        module procedure ftan_r64
+        module procedure ftan_sp
+        module procedure ftan_dp
     end interface
 
     interface facos
-        module procedure facos_r32
-        module procedure facos_r64
+        module procedure facos_sp
+        module procedure facos_dp
     end interface
     
     interface facos_nvidia
     !! Source : https://developer.download.nvidia.com/cg/acos.html
-        module procedure facos_nvidia_r32
-        module procedure facos_nvidia_r64
+        module procedure facos_nvidia_sp
+        module procedure facos_nvidia_dp
     end interface
     
     contains
     
-    elemental function fcos_r32( x ) result( y )
-        integer, parameter :: wp = real32
+    elemental function fcos_sp( x ) result( y )
+        integer, parameter :: wp = sp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
         real(wp), parameter :: half_pi =acos(-1.0_wp)/2
         !---------------------------------------------
-        y = fsin_r32( half_pi - x )
+        y = fsin_sp( half_pi - x )
     end function
 
-    elemental function fcos_r64( x ) result( y )
-        integer, parameter :: wp = real64
+    elemental function fcos_dp( x ) result( y )
+        integer, parameter :: wp = dp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
         real(wp), parameter :: half_pi =acos(-1.0_wp)/2
         !---------------------------------------------
-        y = fsin_r64( half_pi - x )
+        y = fsin_dp( half_pi - x )
     end function
 
-    elemental function fsin_r32( x ) result( y )
-        integer, parameter :: wp = real32
+    elemental function fsin_sp( x ) result( y )
+        integer, parameter :: wp = sp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
@@ -77,8 +77,8 @@ module fast_trigo
         y = c3*(y*abs(y)-y)+y
     end function
 
-    elemental function fsin_r64( x ) result( y )
-        integer, parameter :: wp = real64
+    elemental function fsin_dp( x ) result( y )
+        integer, parameter :: wp = dp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
@@ -94,8 +94,8 @@ module fast_trigo
         y = c3*(y*abs(y)-y)+y
     end function
 
-    elemental function ftan_r32( x ) result( y )
-        integer, parameter :: wp = real32
+    elemental function ftan_sp( x ) result( y )
+        integer, parameter :: wp = sp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
@@ -109,8 +109,8 @@ module fast_trigo
                  (2.4674011002723397_wp - xsq)
     end function
 
-    elemental function ftan_r64( x ) result( y )
-        integer, parameter :: wp = real64
+    elemental function ftan_dp( x ) result( y )
+        integer, parameter :: wp = dp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
@@ -128,24 +128,24 @@ module fast_trigo
     ! Inverse
     !====================================================
 
-    elemental function facos_r32( x ) result( y )
-      integer, parameter :: wp = real32
+    elemental function facos_sp( x ) result( y )
+      integer, parameter :: wp = sp
       real(wp), intent(in) :: x
       real(wp) :: y
       !---------------------------------------------
       y =  (-0.69813170079773212_wp * x * x - 0.87266462599716477_wp) * x + 1.5707963267948966_wp;
     end function
 
-    elemental function facos_r64( x ) result( y )
-      integer, parameter :: wp = real64
+    elemental function facos_dp( x ) result( y )
+      integer, parameter :: wp = dp
       real(wp), intent(in) :: x
       real(wp) :: y
       !---------------------------------------------
       y =  (-0.69813170079773212_wp * x * x - 0.87266462599716477_wp) * x + 1.5707963267948966_wp;
     end function
 
-    elemental function  facos_nvidia_r32( x ) result( y )
-        integer, parameter :: wp = real32
+    elemental function  facos_nvidia_sp( x ) result( y )
+        integer, parameter :: wp = sp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
@@ -161,8 +161,8 @@ module fast_trigo
         y = y + negate * (- 2.0_wp * y + 3.14159265358979_wp)
     end function
 
-    elemental function  facos_nvidia_r64( x ) result( y )
-        integer, parameter :: wp = real64
+    elemental function  facos_nvidia_dp( x ) result( y )
+        integer, parameter :: wp = dp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables

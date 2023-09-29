@@ -5,21 +5,21 @@
 !
 module fast_erf
     !! Source: https://fortran-lang.discourse.group/t/fastgpt-faster-than-pytorch-in-300-lines-of-fortran/5385/31
-    use iso_fortran_env
+    use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
     implicit none
     private
     
     public :: ferf
     
     interface ferf
-        module procedure ferf_r32
-        module procedure ferf_r64
+        module procedure ferf_sp
+        module procedure ferf_dp
     end interface
     
     contains
     
-    elemental function ferf_r32( x ) result( y )
-        integer, parameter :: wp = real32
+    elemental function ferf_sp( x ) result( y )
+        integer, parameter :: wp = sp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
@@ -30,8 +30,8 @@ module fast_erf
         y = y * sign(1.0_wp,x)
     end function
 
-    elemental function ferf_r64( x ) result( y )
-        integer, parameter :: wp = real64
+    elemental function ferf_dp( x ) result( y )
+        integer, parameter :: wp = dp
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables

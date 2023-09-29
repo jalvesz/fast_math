@@ -6,7 +6,7 @@
 module fast_dotp
     !! A faster and more accurate implementation of the dot_product intrinsic. 
     !! It uses the same principle as fsum_chunk but considering local multiplications that can be vectorized for faster summation.
-    use iso_fortran_env
+    use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
     implicit none
     private
     
@@ -15,16 +15,16 @@ module fast_dotp
     integer, parameter :: chunk32 = 64
     
     interface fprod
-        module procedure fprod_r32
-        module procedure fprod_r32_weighted
-        module procedure fprod_r64
-        module procedure fprod_r64_weighted
+        module procedure fprod_sp
+        module procedure fprod_sp_weighted
+        module procedure fprod_dp
+        module procedure fprod_dp_weighted
     end interface
     
     contains
 
-    pure function fprod_r32(a,b) result(p)
-        integer, parameter :: wp = real32
+    pure function fprod_sp(a,b) result(p)
+        integer, parameter :: wp = sp
         integer, parameter :: chunk = chunk32
         real(wp), intent(in) :: a(:)
         real(wp), intent(in) :: b(:)
@@ -49,8 +49,8 @@ module fast_dotp
         end do
     end function
   
-    pure function fprod_r64(a,b) result(p)
-        integer, parameter :: wp = real64
+    pure function fprod_dp(a,b) result(p)
+        integer, parameter :: wp = dp
         integer, parameter :: chunk = chunk64
         real(wp), intent(in) :: a(:)
         real(wp), intent(in) :: b(:)
@@ -75,8 +75,8 @@ module fast_dotp
         end do
     end function
     
-    pure function fprod_r32_weighted(a,b,w) result(p)
-        integer, parameter :: wp = real32
+    pure function fprod_sp_weighted(a,b,w) result(p)
+        integer, parameter :: wp = sp
         integer, parameter :: chunk = chunk32
         real(wp), intent(in) :: a(:)
         real(wp), intent(in) :: b(:)
@@ -102,8 +102,8 @@ module fast_dotp
         end do
     end function
   
-    pure function fprod_r64_weighted(a,b,w) result(p)
-        integer, parameter :: wp = real64
+    pure function fprod_dp_weighted(a,b,w) result(p)
+        integer, parameter :: wp = dp
         integer, parameter :: chunk = chunk64
         real(wp), intent(in) :: a(:)
         real(wp), intent(in) :: b(:)

@@ -7,7 +7,7 @@ module fast_sum
   !! Two fast & accurate sum are proposed for 1D arrays:
   !! By default, "fsum" will use the fsum_chunk approach. This method is at worst, one order of magnitud more accurate that "sum" and between 1.5 to 10 times faster
   !! A second approach is also proposed, "fsum_pair" which is the most accurate approach. cpu time can vary between x2 times slower or sometimes faster than intrinsic sum.
-  use iso_fortran_env
+  use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
   implicit none
   private
 
@@ -17,24 +17,24 @@ module fast_sum
   
   interface fsum
     !! Source: to the best of knowledge: Alves J. but heavily inspired by this paper https://epubs.siam.org/doi/10.1137/19M1257780
-      module procedure fsum_chunk_1d_r32
-      module procedure fsum_chunk_1d_r32_mask
-      module procedure fsum_chunk_1d_r64
-      module procedure fsum_chunk_1d_r64_mask
+      module procedure fsum_chunk_1d_sp
+      module procedure fsum_chunk_1d_sp_mask
+      module procedure fsum_chunk_1d_dp
+      module procedure fsum_chunk_1d_dp_mask
   end interface
 
   interface fsum_pair
     !! Source: https://fortran-lang.discourse.group/t/some-intrinsic-sums/5760/26
-      module procedure fsum_pair_1d_r32
-      module procedure fsum_pair_1d_r32_mask
-      module procedure fsum_pair_1d_r64
-      module procedure fsum_pair_1d_r64_mask
+      module procedure fsum_pair_1d_sp
+      module procedure fsum_pair_1d_sp_mask
+      module procedure fsum_pair_1d_dp
+      module procedure fsum_pair_1d_dp_mask
   end interface
   
   contains
 
-  pure recursive function fsum_pair_1d_r32(a) result(bout)
-      integer, parameter :: wp=real32
+  pure recursive function fsum_pair_1d_sp(a) result(bout)
+      integer, parameter :: wp=sp
       integer, parameter :: chunk = chunk32
       real(wp), intent(in) :: a(:)
       real(wp) :: bout
@@ -51,8 +51,8 @@ module fast_sum
       end if
   end function
 
-  pure recursive function fsum_pair_1d_r64(a) result(bout)
-      integer, parameter :: wp=real64
+  pure recursive function fsum_pair_1d_dp(a) result(bout)
+      integer, parameter :: wp=dp
       integer, parameter :: chunk = chunk64
       real(wp), intent(in) :: a(:)
       real(wp) :: bout
@@ -69,8 +69,8 @@ module fast_sum
       end if
   end function
   
-  pure recursive function fsum_pair_1d_r32_mask(a,mask) result(bout)
-      integer, parameter :: wp=real32
+  pure recursive function fsum_pair_1d_sp_mask(a,mask) result(bout)
+      integer, parameter :: wp=sp
       integer, parameter :: chunk = chunk32
       real(wp), intent(in) :: a(:)
       logical, intent(in) :: mask(:)
@@ -88,8 +88,8 @@ module fast_sum
       end if
   end function
 
-  pure recursive function fsum_pair_1d_r64_mask(a,mask) result(bout)
-      integer, parameter :: wp=real64
+  pure recursive function fsum_pair_1d_dp_mask(a,mask) result(bout)
+      integer, parameter :: wp=dp
       integer, parameter :: chunk = chunk64
       real(wp), intent(in) :: a(:)
       logical, intent(in) :: mask(:)
@@ -107,8 +107,8 @@ module fast_sum
       end if
   end function  
   
-  pure function fsum_chunk_1d_r32(a) result(sout)
-      integer, parameter :: wp = real32
+  pure function fsum_chunk_1d_sp(a) result(sout)
+      integer, parameter :: wp = sp
       integer, parameter :: chunk = chunk32
       real(wp), intent(in) :: a(:)
       real(wp) :: sout
@@ -131,8 +131,8 @@ module fast_sum
       end do
   end function
 
-  pure function fsum_chunk_1d_r64(a) result(sout)
-      integer, parameter :: wp = real64
+  pure function fsum_chunk_1d_dp(a) result(sout)
+      integer, parameter :: wp = dp
       integer, parameter :: chunk = chunk64
       real(wp), intent(in) :: a(:)
       real(wp) :: sout
@@ -155,8 +155,8 @@ module fast_sum
       end do
   end function
   
-  pure function fsum_chunk_1d_r32_mask(a,mask) result(sout)
-      integer, parameter :: wp = real32
+  pure function fsum_chunk_1d_sp_mask(a,mask) result(sout)
+      integer, parameter :: wp = sp
       integer, parameter :: chunk = chunk32
       real(wp), intent(in) :: a(:)
       logical, intent(in) :: mask(:)
@@ -180,8 +180,8 @@ module fast_sum
       end do
   end function
 
-  pure function fsum_chunk_1d_r64_mask(a,mask) result(sout)
-      integer, parameter :: wp = real64
+  pure function fsum_chunk_1d_dp_mask(a,mask) result(sout)
+      integer, parameter :: wp = dp
       integer, parameter :: chunk = chunk64
       real(wp), intent(in) :: a(:)
       logical, intent(in) :: mask(:)
