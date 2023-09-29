@@ -388,9 +388,7 @@ subroutine test_fast_trigonometry(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( sum( y - yref )**2 / n )
 
-        if(verbose)then
-            print 1, "fsin r32" , time(2), time(1)/time(2), err
-        end if
+        if(verbose) print 1, "fsin r32" , time(2), time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -410,9 +408,7 @@ subroutine test_fast_trigonometry(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( sum( y - yref )**2 / n )
 
-        if(verbose)then
-            print 1, "fsin r64" , time(2), time(1)/time(2), err
-        end if
+        if(verbose) print 1, "fsin r64" , time(2), time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -433,9 +429,7 @@ subroutine test_fast_trigonometry(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( sum( y - yref )**2 / n )
 
-        if(verbose)then
-            print 1, "facos r32" , time(2), time(1)/time(2), err
-        end if
+        if(verbose) print 1, "facos r32" , time(2), time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -455,9 +449,7 @@ subroutine test_fast_trigonometry(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( sum( y - yref )**2 / n )
 
-        if(verbose)then
-            print 1, "facos r64" , time(2), time(1)/time(2), err
-        end if
+        if(verbose) print 1, "facos r64" , time(2), time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
