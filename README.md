@@ -1,6 +1,8 @@
 # Fortran Fast math
 A collection of functions for fast number crunching using Fortran.
 
+In order to get the maximum performance of this library, compile with "-O3 -march=native".
+
 # Available functions
 
 * fast (and precise) sum for 1D arrays - possibility of including a mask.
