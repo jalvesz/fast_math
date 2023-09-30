@@ -9,6 +9,10 @@ module fast_math
   ! Basics
   use fast_sum
   use fast_dotp
+  use fast_rsqrt
+  !-------------------------
+  ! logarithmic
+  use fast_log
   !-------------------------
   ! Trigonometric
   use fast_trigo
