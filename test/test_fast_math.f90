@@ -59,10 +59,10 @@ subroutine test_fast_sum(error)
         print *,""
         print *,"================================================================"
         print *," SUM on single precision values "
-        print 1, "sum_quad"  , times_tot(1), times_tot(2)/times_tot(1), abs(err(1)) / abs(meanval(1))
-        print 1, "intrinsic" , times_tot(2), times_tot(2)/times_tot(2), abs(err(2)) / abs(meanval(2))
-        print 1, "fsum_pair" , times_tot(3), times_tot(2)/times_tot(3), abs(err(3)) / abs(meanval(3))
-        print 1, "fsum_chunk", times_tot(4), times_tot(2)/times_tot(4), abs(err(4)) / abs(meanval(4))
+        print 1, "sum_quad"  , 1e9*times_tot(1)/(niter*n) , times_tot(2)/times_tot(1), abs(err(1))/abs(meanval(1))
+        print 1, "intrinsic" , 1e9*times_tot(2)/(niter*n) , times_tot(2)/times_tot(2), abs(err(2))/abs(meanval(2))
+        print 1, "fsum_pair" , 1e9*times_tot(3)/(niter*n) , times_tot(2)/times_tot(3), abs(err(3))/abs(meanval(3))
+        print 1, "fsum_chunk", 1e9*times_tot(4)/(niter*n) , times_tot(2)/times_tot(4), abs(err(4))/abs(meanval(4))
         end if
 
         call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
@@ -102,10 +102,10 @@ subroutine test_fast_sum(error)
         print *,""
         print *,"================================================================"
         print *," SUM on single precision values with a mask"
-        print 1, "sum_quad"  , times_tot(1), times_tot(2)/times_tot(1), abs(err(1)) / abs(meanval(1))
-        print 1, "intrinsic" , times_tot(2), times_tot(2)/times_tot(2), abs(err(2)) / abs(meanval(2))
-        print 1, "fsum_pair" , times_tot(3), times_tot(2)/times_tot(3), abs(err(3)) / abs(meanval(3))
-        print 1, "fsum_chunk", times_tot(4), times_tot(2)/times_tot(4), abs(err(4)) / abs(meanval(4))
+        print 1, "sum_quad"  , 1e9*times_tot(1)/(niter*n) , times_tot(2)/times_tot(1), abs(err(1))/abs(meanval(1))
+        print 1, "intrinsic" , 1e9*times_tot(2)/(niter*n) , times_tot(2)/times_tot(2), abs(err(2))/abs(meanval(2))
+        print 1, "fsum_pair" , 1e9*times_tot(3)/(niter*n) , times_tot(2)/times_tot(3), abs(err(3))/abs(meanval(3))
+        print 1, "fsum_chunk", 1e9*times_tot(4)/(niter*n) , times_tot(2)/times_tot(4), abs(err(4))/abs(meanval(4))
         end if
 
         call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
@@ -141,10 +141,10 @@ subroutine test_fast_sum(error)
         print *,""
         print *,"================================================================"
         print *," SUM on double precision values "
-        print 1, "sum_quad"  , times_tot(1), times_tot(2)/times_tot(1), abs(err(1)) / abs(meanval(1))
-        print 1, "intrinsic" , times_tot(2), times_tot(2)/times_tot(2), abs(err(2)) / abs(meanval(2))
-        print 1, "fsum_pair" , times_tot(3), times_tot(2)/times_tot(3), abs(err(3)) / abs(meanval(3))
-        print 1, "fsum_chunk", times_tot(4), times_tot(2)/times_tot(4), abs(err(4)) / abs(meanval(4))
+        print 1, "sum_quad"  , 1e9*times_tot(1)/(niter*n) , times_tot(2)/times_tot(1), abs(err(1))/abs(meanval(1))
+        print 1, "intrinsic" , 1e9*times_tot(2)/(niter*n) , times_tot(2)/times_tot(2), abs(err(2))/abs(meanval(2))
+        print 1, "fsum_pair" , 1e9*times_tot(3)/(niter*n) , times_tot(2)/times_tot(3), abs(err(3))/abs(meanval(3))
+        print 1, "fsum_chunk", 1e9*times_tot(4)/(niter*n) , times_tot(2)/times_tot(4), abs(err(4))/abs(meanval(4))
         end if
 
         call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
@@ -184,10 +184,10 @@ subroutine test_fast_sum(error)
         print *,""
         print *,"================================================================"
         print *," SUM on double precision values with a mask"
-        print 1, "sum_quad"  , times_tot(1), times_tot(2)/times_tot(1), abs(err(1)) / abs(meanval(1))
-        print 1, "intrinsic" , times_tot(2), times_tot(2)/times_tot(2), abs(err(2)) / abs(meanval(2))
-        print 1, "fsum_pair" , times_tot(3), times_tot(2)/times_tot(3), abs(err(3)) / abs(meanval(3))
-        print 1, "fsum_chunk", times_tot(4), times_tot(2)/times_tot(4), abs(err(4)) / abs(meanval(4))
+        print 1, "sum_quad"  , 1e9*times_tot(1)/(niter*n) , times_tot(2)/times_tot(1), abs(err(1))/abs(meanval(1))
+        print 1, "intrinsic" , 1e9*times_tot(2)/(niter*n) , times_tot(2)/times_tot(2), abs(err(2))/abs(meanval(2))
+        print 1, "fsum_pair" , 1e9*times_tot(3)/(niter*n) , times_tot(2)/times_tot(3), abs(err(3))/abs(meanval(3))
+        print 1, "fsum_chunk", 1e9*times_tot(4)/(niter*n) , times_tot(2)/times_tot(4), abs(err(4))/abs(meanval(4))
         end if 
 
         call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
@@ -235,9 +235,9 @@ subroutine test_fast_dotproduct(error)
         print *,""
         print *,"================================================================"
         print *," dot product on single precision values "
-        print 1, "dot_quad"  , times_tot(1), times_tot(2)/times_tot(1), abs(err(1)) / abs(meanval(1))
-        print 1, "intrinsic" , times_tot(2), times_tot(2)/times_tot(2), abs(err(2)) / abs(meanval(2))
-        print 1, "fprod"     , times_tot(3), times_tot(2)/times_tot(3), abs(err(3)) / abs(meanval(3))
+        print 1, "dot_quad"  , 1e9*times_tot(1)/(niter*n) , times_tot(2)/times_tot(1), abs(err(1))/abs(meanval(1))
+        print 1, "intrinsic" , 1e9*times_tot(2)/(niter*n) , times_tot(2)/times_tot(2), abs(err(2))/abs(meanval(2))
+        print 1, "fprod"     , 1e9*times_tot(3)/(niter*n) , times_tot(2)/times_tot(3), abs(err(3))/abs(meanval(3))
         end if
 
         call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
@@ -272,9 +272,9 @@ subroutine test_fast_dotproduct(error)
         print *,""
         print *,"================================================================"
         print *," dot product on double precision values "
-        print 1, "dot_quad"  , times_tot(1), times_tot(2)/times_tot(1), abs(err(1)) / abs(meanval(1))
-        print 1, "intrinsic" , times_tot(2), times_tot(2)/times_tot(2), abs(err(2)) / abs(meanval(2))
-        print 1, "fprod"     , times_tot(3), times_tot(2)/times_tot(3), abs(err(3)) / abs(meanval(3))
+        print 1, "dot_quad"  , 1e9*times_tot(1)/(niter*n) , times_tot(2)/times_tot(1), abs(err(1))/abs(meanval(1))
+        print 1, "intrinsic" , 1e9*times_tot(2)/(niter*n) , times_tot(2)/times_tot(2), abs(err(2))/abs(meanval(2))
+        print 1, "fprod"     , 1e9*times_tot(3)/(niter*n) , times_tot(2)/times_tot(3), abs(err(3))/abs(meanval(3))
         end if
 
         call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
@@ -309,9 +309,9 @@ subroutine test_fast_dotproduct(error)
         print *,""
         print *,"================================================================"
         print *," weigthed dot product on single precision values "
-        print 1, "dot_quad"  , times_tot(1), times_tot(2)/times_tot(1), abs(err(1)) / abs(meanval(1))
-        print 1, "intrinsic" , times_tot(2), times_tot(2)/times_tot(2), abs(err(2)) / abs(meanval(2))
-        print 1, "fprod"     , times_tot(3), times_tot(2)/times_tot(3), abs(err(3)) / abs(meanval(3))
+        print 1, "dot_quad"  , 1e9*times_tot(1)/(niter*n) , times_tot(2)/times_tot(1), abs(err(1))/abs(meanval(1))
+        print 1, "intrinsic" , 1e9*times_tot(2)/(niter*n) , times_tot(2)/times_tot(2), abs(err(2))/abs(meanval(2))
+        print 1, "fprod"     , 1e9*times_tot(3)/(niter*n) , times_tot(2)/times_tot(3), abs(err(3))/abs(meanval(3))
         end if
 
         call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
@@ -346,9 +346,9 @@ subroutine test_fast_dotproduct(error)
         print *,""
         print *,"================================================================"
         print *," weigthed dot product on double precision values "
-        print 1, "dot_quad"  , times_tot(1), times_tot(2)/times_tot(1), abs(err(1)) / abs(meanval(1))
-        print 1, "intrinsic" , times_tot(2), times_tot(2)/times_tot(2), abs(err(2)) / abs(meanval(2))
-        print 1, "fprod"     , times_tot(3), times_tot(2)/times_tot(3), abs(err(3)) / abs(meanval(3))
+        print 1, "dot_quad"  , 1e9*times_tot(1)/(niter*n) , times_tot(2)/times_tot(1), abs(err(1))/abs(meanval(1))
+        print 1, "intrinsic" , 1e9*times_tot(2)/(niter*n) , times_tot(2)/times_tot(2), abs(err(2))/abs(meanval(2))
+        print 1, "fprod"     , 1e9*times_tot(3)/(niter*n) , times_tot(2)/times_tot(3), abs(err(3))/abs(meanval(3))
         end if
 
         call check(error, abs(err(ncalc)) / abs(meanval(1)) < tolerance &
@@ -388,7 +388,7 @@ subroutine test_fast_trigonometry(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( sum( y - yref )**2 / n )
 
-        if(verbose) print 1, "fsin r32" , time(2), time(1)/time(2), err
+        if(verbose) print 1, "fsin r32" , 1e9*time(2)/n, time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -408,7 +408,7 @@ subroutine test_fast_trigonometry(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( sum( y - yref )**2 / n )
 
-        if(verbose) print 1, "fsin r64" , time(2), time(1)/time(2), err
+        if(verbose) print 1, "fsin r64" , 1e9*time(2)/n, time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -429,7 +429,7 @@ subroutine test_fast_trigonometry(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( sum( y - yref )**2 / n )
 
-        if(verbose) print 1, "facos r32" , time(2), time(1)/time(2), err
+        if(verbose) print 1, "facos r32" , 1e9*time(2)/n, time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -449,7 +449,7 @@ subroutine test_fast_trigonometry(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( sum( y - yref )**2 / n )
 
-        if(verbose) print 1, "facos r64" , time(2), time(1)/time(2), err
+        if(verbose) print 1, "facos r64" , 1e9*time(2)/n, time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -487,7 +487,7 @@ subroutine test_fast_hyperbolic(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( fsum(( y - yref )**2) ) / sqrt( fsum(( yref )**2) )
 
-        if(verbose) print 1, "ftanh r64" , time(2), time(1)/time(2), err
+        if(verbose) print 1, "ftanh r64" , 1e9*time(2)/n, time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -507,7 +507,7 @@ subroutine test_fast_hyperbolic(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( fsum(( y - yref )**2) ) / sqrt( fsum(( yref )**2) )
 
-        if(verbose) print 1, "ftanh r64" , time(2), time(1)/time(2), err
+        if(verbose) print 1, "ftanh r64" , 1e9*time(2)/n, time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -528,7 +528,7 @@ subroutine test_fast_hyperbolic(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( fsum(( y - yref )**2) ) / sqrt( fsum(( yref )**2) )
 
-        if(verbose)print 1, "ferf r32" , time(2), time(1)/time(2), err
+        if(verbose)print 1, "ferf r32" , 1e9*time(2)/n, time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -548,7 +548,7 @@ subroutine test_fast_hyperbolic(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( fsum(( y - yref )**2) ) / sqrt( fsum(( yref )**2) )
 
-        if(verbose) print 1, "ferf r64" , time(2), time(1)/time(2), err
+        if(verbose) print 1, "ferf r64" , 1e9*time(2)/n, time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return

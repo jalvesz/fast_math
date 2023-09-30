@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/681533852.svg)](https://zenodo.org/badge/latestdoi/681533852)
 # Fortran Fast math
 A collection of functions for fast number crunching using Fortran.
 
@@ -40,6 +41,11 @@ ford ford.yml
 
 # Acknowledgement
 
-Compilation of this library was possible thanks to [Transvalor S.A.](https://www.transvalor.com/en/homepage) research activities and, the contribution of open-source developers:
+* Compilation of this library was possible thanks to [Transvalor S.A.](https://www.transvalor.com/en/homepage) research activities. 
+* Part of this library is based on the work of [Perini and Reitz](https://doi.org/10.1016/j.combustflame.2018.04.013), that was funded through the Sandia National Laboratories by the U.S. Department of Energy, Office of Vehicle Technologies, program managers Leo Breton, Gupreet Singh.
+
+Contribution of open-source developers:
 
 [jalvesz](https://github.com/jalvesz)
+
+[perazz](https://github.com/perazz)
