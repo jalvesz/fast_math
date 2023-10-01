@@ -2,27 +2,30 @@
 # Fortran Fast math
 A collection of functions for fast number crunching using Fortran.
 
-In order to get the maximum performance of this library, compile with "-O3 -march=native".
+In order to get the maximum performance of this library, compile with "-O3 -march=native" (or equivalent).
 
 # Available functions
 
-* fast (and precise) sum for 1D arrays - possibility of including a mask.
-    fsum: fastest method and at worst, 1 order of magnitud more precise than the intrinsic sum. It groups chunks of values in a temporal working batch which is summed up once at the end.
-    fsum_pair: Highest precision. It has a precission equivalent to a quadratic sum (for real32 summing with real64, and fo real64 summing with real128). runtime can be slightly slower or just as fast as the intrinsic sum.
+| function | name(s)               | shapes     | types            | 
+|----------|-----------------------|------------|------------------|
+| sum      | `fsum` `fsum_pair`(1) |        `1d`|`real32` `real64` |
+| dot      | `fprod`(2)            |        `1d`|`real32` `real64` |
+| cos      | `fcos`                | `elemental`|`real32` `real64` |
+| sin      | `fsin`                | `elemental`|`real32` `real64` |
+| tan      | `ftan`                | `elemental`|`real32` `real64` |
+| tanh     | `ftanh`               | `elemental`|`real32` `real64` |
+| acos     | `facos`               | `elemental`|`real32` `real64` |
+| erf      | `ferf`                | `elemental`|`real32` `real64` |
+| log      | `flog_p3` `flog_p5`   | `elemental`|         `real64` |
+| rsqrt(3) | `frsqrt`              | `elemental`|         `real64` |
 
-* fast (and precise) dot product for 1D arrays - possibility of including a mask.
-    fprod: fastest method and at worst, 1 order of magnitud more precise than the intrinsic dot_product. It groups chunks of products in a temporal working batch which is summed up once at the end.
+* (1) fast (and precise) sum for 1D arrays - possibility of including a mask.
+    `fsum`: fastest method and at worst, same or 1 order of magnitud more precise than the intrinsic sum. runtime can vary between 3X and 9X the intrinsic. It groups chunks of values in a temporal working batch which is summed up once at the end.
+    `fsum_pair`: Highest precision. It has a precission equivalent to a quadratic sum (for real32 summing with real64, and fo real64 summing with real128). runtime can vary between 0.9X to 1.6X the intrinsic sum.
 
-## Trigonometric
-* fast cosinus
-* fast sinus
-* fast tangent
-* fast acosinus
-* fast tanh
-
-## Other
-* fast erf
-
+* (2) fast (and precise) dot product for 1D arrays - possibility of including a 3rd weighting array.
+    `fprod`: fastest method and at worst, 1 order of magnitud more precise than the intrinsic dot_product. runtime can vary between 3X and 8X the intrinsic. It groups chunks of products in a temporal working batch which is summed up once at the end (based on `fsum`).
+* (3) rsqrt: reciprocal square root $f(x)=1/sqrt(x)$
 # API documentation
 
 To generate the API documentation for `fast_math` using
