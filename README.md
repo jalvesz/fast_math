@@ -46,6 +46,7 @@ ford ford.yml
 
 * Compilation of this library was possible thanks to [Transvalor S.A.](https://www.transvalor.com/en/homepage) research activities. 
 * Part of this library is based on the work of [Perini and Reitz](https://doi.org/10.1016/j.combustflame.2018.04.013), that was funded through the Sandia National Laboratories by the U.S. Department of Energy, Office of Vehicle Technologies, program managers Leo Breton, Gupreet Singh.
+* The [fortran lang community](https://fortran-lang.discourse.group/) discussions such as [Some Intrinsic SUMS](https://fortran-lang.discourse.group/t/some-intrinsic-sums/5760) and [fastGPT](https://fortran-lang.discourse.group/t/fastgpt-faster-than-pytorch-in-300-lines-of-fortran/5385)
 
 Contribution of open-source developers:
 
