@@ -17,7 +17,7 @@ In order to get the maximum performance of this library, compile with "-O3 -marc
 | acos     | `facos`               | `elemental`|`real32` `real64` |
 | erf      | `ferf`                | `elemental`|`real32` `real64` |
 | log      | `flog_p3` `flog_p5`   | `elemental`|         `real64` |
-| rsqrt(3) | `frsqrt`              | `elemental`|         `real64` |
+| rsqrt(3) | `frsqrt`              | `elemental`|`real32` `real64` |
 
 * (1) fast (and precise) sum for 1D arrays - possibility of including a mask.
     `fsum`: fastest method and at worst, same or 1 order of magnitud more precise than the intrinsic sum. runtime can vary between 3X and 9X the intrinsic. It groups chunks of values in a temporal working batch which is summed up once at the end.

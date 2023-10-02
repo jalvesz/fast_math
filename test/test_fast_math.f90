@@ -16,7 +16,8 @@ subroutine collect_suite(testsuite)
         new_unittest('fast_sum', test_fast_sum) , &
         new_unittest('fast_dotp', test_fast_dotproduct) , &
         new_unittest('fast_trig', test_fast_trigonometry) , &
-        new_unittest('fast_hyper', test_fast_hyperbolic ) &
+        new_unittest('fast_hyper', test_fast_hyperbolic ) & !, &
+        !new_unittest('fast_rsqrt', test_fast_rsqrt ) & !! The Quake III rsqrt implementation here is not realy much faster that what compilers can do.
     ]
 end subroutine
 
@@ -487,7 +488,7 @@ subroutine test_fast_hyperbolic(error)
         time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
         err = sqrt( fsum(( y - yref )**2) ) / sqrt( fsum(( yref )**2) )
 
-        if(verbose) print 1, "ftanh r64" , 1e9*time(2)/n, time(1)/time(2), err
+        if(verbose) print 1, "ftanh r32" , 1e9*time(2)/n, time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
@@ -549,6 +550,66 @@ subroutine test_fast_hyperbolic(error)
         err = sqrt( fsum(( y - yref )**2) ) / sqrt( fsum(( yref )**2) )
 
         if(verbose) print 1, "ferf r64" , 1e9*time(2)/n, time(1)/time(2), err
+
+        call check(error, err < tolerance .and. time(2) < time(1) )
+        if (allocated(error)) return
+    end block
+
+end subroutine
+
+subroutine test_fast_rsqrt(error)
+    !> Error handling
+    type(error_type), allocatable, intent(out) :: error
+
+    !> Internal parameters and variables
+    integer, parameter :: n = 1e6, ncalc = 2
+    integer :: i
+    real(dp) :: time(0:ncalc), err
+    1 format(a10,': <time> = ',f9.4,' ns/eval, speed-up=',f5.2,'X, rel. error=',es16.4)
+    !====================================================================================
+    if(verbose)then
+        print *,""
+        print *,"================================================================"
+        print *," Fast rsqrt = 1/sqrt(x)"
+    end if
+    block
+        integer, parameter :: wp=sp
+        real(wp), allocatable :: x(:) , y(:), yref(:)
+        real(kind=wp) :: tolerance = 1e-2_wp
+        !> define a log space
+        allocate( x(n) , y(n), yref(n) )
+        call random_number(x)
+        x = 10._wp**(-10*(1._wp-x) + 10*x)
+
+        call cpu_time(time(0))
+        yref = 1._wp/sqrt(x); call cpu_time(time(1))
+        y = frsqrt(x)  ; call cpu_time(time(2))
+
+        time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
+        err = sqrt( fsum(( y - yref )**2) ) / sqrt( fsum(( yref )**2) )
+
+        if(verbose) print 1, "frsqrt r32" , 1e9*time(2)/n, time(1)/time(2), err
+
+        call check(error, err < tolerance .and. time(2) < time(1) )
+        if (allocated(error)) return
+    end block
+    block
+        integer, parameter :: wp=dp
+        real(wp), allocatable :: x(:) , y(:), yref(:)
+        real(kind=wp) :: tolerance = 1e-2_wp
+        !> define a log space
+        allocate( x(n) , y(n), yref(n) )
+        call random_number(x)
+        x = 10._wp**(-200*(1._wp-x) + 200*x)
+
+        call cpu_time(time(0))
+        yref = 1._wp/sqrt(x); call cpu_time(time(1))
+        y = frsqrt(x)  ; call cpu_time(time(2))
+
+        time(2:1:-1) = time(2:1:-1) - time(1:0:-1)
+        err = sqrt( fsum(( y - yref )**2) ) / sqrt( fsum(( yref )**2) )
+
+        if(verbose) print 1, "frsqrt r64" , 1e9*time(2)/n, time(1)/time(2), err
 
         call check(error, err < tolerance .and. time(2) < time(1) )
         if (allocated(error)) return
