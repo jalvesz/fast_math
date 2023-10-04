@@ -44,7 +44,14 @@ contains
     end function frsqrt_sp
 
     elemental function frsqrt_dp(x) result(y)
+        !! Double precision implementation of the Quake III arena algorithm
+        !! With an avx2 enabled machine you will have speed-ups compared to the intrinsic 1/srqt(x)
+        !! even with 2 or 3 Newton-Raphson iterations
+        !! 1 iter > precision at 1e-3
+        !! 2 iter > precision at 1e-6
+        !! 3 iter > precision at 1e-11
         integer, parameter :: wp = dp
+        integer, parameter :: ninter = 2
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
@@ -57,9 +64,11 @@ contains
         i  = magic - shiftr(i,1)
         y2 = transfer(i,y)
 
-        ! Perform one Newton-Raphson step
-        y  = y2*(1.5_wp-x2*y2*y2)
-
+        ! Perform Newton-Raphson steps 
+        do i = 1, ninter
+            y2  = y2*(1.5_wp-x2*y2*y2)  
+        end do
+        y = y2
     end function frsqrt_dp
     
 end module fast_rsqrt
