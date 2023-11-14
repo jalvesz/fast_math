@@ -10,6 +10,7 @@
 !   ***********************************************************************************************
 module fast_log
     use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
+    use fast_utilities
     implicit none
     private
     
