@@ -8,8 +8,8 @@ In order to get the maximum performance of this library, compile with "-O3 -marc
 
 | function | name(s)               | shapes     | types            | 
 |----------|-----------------------|------------|------------------|
-| sum      | `fsum` `fsum_pair`(1) |        `1d`|`real32` `real64` |
-| dot      | `fprod`(2)            |        `1d`|`real32` `real64` |
+| sum      | `fsum` `fsum_kahan`(1) |        `1d`|`real32` `real64` |
+| dot      | `fprod` `fprod_kahan`(2)|        `1d`|`real32` `real64` |
 | cos      | `fcos`                | `elemental`|`real32` `real64` |
 | sin      | `fsin`                | `elemental`|`real32` `real64` |
 | tan      | `ftan`                | `elemental`|`real32` `real64` |
@@ -20,11 +20,12 @@ In order to get the maximum performance of this library, compile with "-O3 -marc
 | rsqrt(3) | `frsqrt`              | `elemental`|`real32` `real64` |
 
 * (1) fast (and precise) sum for 1D arrays - possibility of including a mask.
-    `fsum`: fastest method and at worst, same or 1 order of magnitud more precise than the intrinsic sum. runtime can vary between 3X and 9X the intrinsic. It groups chunks of values in a temporal working batch which is summed up once at the end.
-    `fsum_pair`: Highest precision. It has a precission equivalent to a quadratic sum (for real32 summing with real64, and fo real64 summing with real128). runtime can vary between 0.9X to 1.6X the intrinsic sum.
+    `fsum`: fastest method and at worst, same or 1 order of magnitud more precise than the intrinsic sum. It groups chunks of values in a temporal working batch which is summed up once at the end.
+    `fsum_kahan`: Highest precision. It has a precission close to a quadratic sum (for real32 summing with real64, and fo real64 summing with real128). It also uses the chunks principle with an elemental kahan operator applied on top.
 
 * (2) fast (and precise) dot product for 1D arrays - possibility of including a 3rd weighting array.
     `fprod`: fastest method and at worst, 1 order of magnitud more precise than the intrinsic dot_product. runtime can vary between 3X and 8X the intrinsic. It groups chunks of products in a temporal working batch which is summed up once at the end (based on `fsum`).
+    `fprod_kahan`: Same idea as `fsum_kahan` but on top of chunked products.
 * (3) rsqrt: reciprocal square root $f(x)=1/sqrt(x)$
 # API documentation
 
