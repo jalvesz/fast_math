@@ -33,7 +33,7 @@ contains
         real(wp) :: xi,xf
         integer(wp) :: iwp
         integer(wp), parameter :: mantissa_left  = 2_wp**52
-        integer(wp), parameter :: mantissa       = not(shiftl(2047_wp,52))
+        integer(wp), parameter :: mantissa       = -9218868437227405313_wp ! not(shiftl(2047_wp,52))
         integer(wp), parameter :: bias           = 1023_wp
         integer(wp), parameter :: ishift         = mantissa_left*bias
 
@@ -64,7 +64,7 @@ contains
         real(wp) :: xi,xf
         integer(wp) :: iwp
         integer(wp), parameter :: mantissa_left  = 2_wp**52
-        integer(wp), parameter :: mantissa       = not(shiftl(2047_wp,52))
+        integer(wp), parameter :: mantissa       = -9218868437227405313_wp ! not(shiftl(2047_wp,52))
         integer(wp), parameter :: bias           = 1023_wp
         integer(wp), parameter :: ishift         = mantissa_left*bias
 
