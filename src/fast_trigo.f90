@@ -133,7 +133,7 @@ module fast_trigo
       real(wp), intent(in) :: x
       real(wp) :: y
       !---------------------------------------------
-      y =  (-0.69813170079773212_wp * x * x - 0.87266462599716477_wp) * x + 1.5707963267948966_wp;
+      y =  (-0.69813170079773212_wp * x * x - 0.87266462599716477_wp) * x + 1.5707963267948966_wp
     end function
 
     elemental function facos_dp( x ) result( y )
@@ -141,7 +141,7 @@ module fast_trigo
       real(wp), intent(in) :: x
       real(wp) :: y
       !---------------------------------------------
-      y =  (-0.69813170079773212_wp * x * x - 0.87266462599716477_wp) * x + 1.5707963267948966_wp;
+      y =  (-0.69813170079773212_wp * x * x - 0.87266462599716477_wp) * x + 1.5707963267948966_wp
     end function
 
     elemental function  facos_nvidia_sp( x ) result( y )
