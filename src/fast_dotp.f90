@@ -7,7 +7,6 @@ module fast_dotp
     !! A faster and more accurate implementation of the dot_product intrinsic. 
     !! It uses the same principle as fsum_chunk but considering local multiplications that can be vectorized for faster summation.
     use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
-    use fast_utilities
     implicit none
     private
     
@@ -27,6 +26,11 @@ module fast_dotp
         module procedure fprod_kahan_sp_weighted
         module procedure fprod_kahan_dp
         module procedure fprod_kahan_dp_weighted
+    end interface
+
+    interface vkahans
+      module procedure vkahans_sp
+      module procedure vkahans_dp
     end interface
     
     contains
@@ -252,5 +256,15 @@ module fast_dotp
           call vkahans( sbatch(i) , p , cbatch(i) )
         end do
     end function
+
+    elemental subroutine vkahans_sp(a,s,c)
+    integer, parameter :: wp = sp
+    include 'utilities/vkahans.inc'
+    end subroutine  
+
+    elemental subroutine vkahans_dp(a,s,c)
+    integer, parameter :: wp = dp
+    include 'utilities/vkahans.inc'
+    end subroutine  
 
   end module fast_dotp

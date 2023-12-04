@@ -8,7 +8,6 @@ module fast_sum
   !! By default, "fsum" will use the fsum_chunk approach. This method is at worst, one order of magnitud more accurate that "sum" and between 1.5 to 10 times faster
   !! A second approach is also proposed, "fsum_pair" which is the most accurate approach. cpu time can vary between x2 times slower or sometimes faster than intrinsic sum.
   use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
-  use fast_utilities
   implicit none
   private
 
@@ -29,6 +28,11 @@ module fast_sum
       module procedure fsum_kahan_1d_sp_mask
       module procedure fsum_kahan_1d_dp
       module procedure fsum_kahan_1d_dp_mask
+  end interface
+
+  interface vkahans
+      module procedure vkahans_sp
+      module procedure vkahans_dp
   end interface
 
   contains
@@ -236,5 +240,15 @@ module fast_sum
         call vkahans( sbatch(i) , sout , cbatch(i) )
       end do
   end function
+
+  elemental subroutine vkahans_sp(a,s,c)
+  integer, parameter :: wp = sp
+  include 'utilities/vkahans.inc'
+  end subroutine  
+
+  elemental subroutine vkahans_dp(a,s,c)
+  integer, parameter :: wp = dp
+  include 'utilities/vkahans.inc'
+  end subroutine  
 
 end module fast_sum
