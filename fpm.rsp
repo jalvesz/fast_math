@@ -1,25 +1,26 @@
 @buildgfortran
-option build --compiler=gfortran --flag "-cpp -O3 -march=native -flto"
+option build --compiler gfortran --flag "-cpp -O3 -march=native"
 
 @testgfortran
-option test --compiler=gfortran --flag "-cpp -O3 -march=native -flto"
+option test --compiler gfortran --flag "-cpp -O3 -march=native"
 
 
 @buildifort
-option build --compiler=ifort --flag "-fpp -O3 -xHost -ipo"
+option build --compiler ifort --flag "-fpp -O3 -xHost"
 
 @testifort
-option test --compiler=ifort --flag "-fpp -O3 -xHost -ipo"
+option test --compiler ifort --flag "-fpp -O3 -xHost"
 
 
 @buildifx
-option build --compiler=ifx --flag "-fpp -O3"
+option build --compiler ifx --flag "-fpp -O3 -xHost"
 
 @testifx
-option test --compiler=ifx --flag "-fpp -O3"
+option test --compiler ifx --flag "-fpp -O3 -xHost"
+
 
 @buildnvfortran
-option build --compiler=nvfortran --flag "-Mpreprocess -fast -Minline"
+option build --compiler nvfortran --flag "-Mpreprocess -fast"
 
 @testnvfortran
-option test --compiler=nvfortran --flag "-Mpreprocess -fast -Minline"
+option test --compiler nvfortran --flag "-Mpreprocess -fast"
