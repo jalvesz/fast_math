@@ -4,7 +4,7 @@ module test_fast_math
     use fast_math
     implicit none
 
-    logical :: verbose = .false. ! change me to .true. if you want to see the results
+    logical :: verbose = .true. ! change me to .true. if you want to see the results
     interface scramble
         module procedure scramble_sp
         module procedure scramble_dp
@@ -13,6 +13,10 @@ module test_fast_math
         module procedure scramble_spl
         module procedure scramble_dpl
     end interface
+
+    character(len=*), parameter :: fmt1 = "('| ',a12,' | <time> [ns/eval] | Speed-Up | relative error' ,'  |')"
+    character(len=*), parameter :: fmt2 = "('|--------------|------------------|----------|-----------------| ')"
+    character(len=*), parameter :: fmt3 = "('| ',a12,' |        ', f9.4,' | ',f8.2,' |',es16.4,' | ')"
 
 contains
 
@@ -112,7 +116,6 @@ subroutine test_fast_sum(error)
     integer, parameter :: n = 1e5, ncalc = 3, niter = 1000
     integer :: iter, i
     real(dp) :: times(0:ncalc), times_tot(ncalc)
-    1 format(a10,': <time> = ',f9.4,' ns/eval, speed-up=',f8.2,'X, rel. error=',es16.4)
     !====================================================================================
     block
         integer, parameter :: wp=sp
@@ -139,11 +142,11 @@ subroutine test_fast_sum(error)
 
         if(verbose)then
         print *,""
-        print *,"================================================================"
-        print *," SUM on single precision values "
-        print 1, "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
-        print 1, "fsum_kahan", 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
-        print 1, "fsum_chunk", 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
+        write(*,fmt1) "sum r32"
+        write(*,fmt2)
+        write(*,fmt3) "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
+        write(*,fmt3) "    kahan" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
+        write(*,fmt3) "    chunk" , 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
         end if
 
         call check(error, all(err(:)<tolerance) )
@@ -175,11 +178,11 @@ subroutine test_fast_sum(error)
 
         if(verbose)then
         print *,""
-        print *,"================================================================"
-        print *," SUM on double precision values "
-        print 1, "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
-        print 1, "fsum_kahan", 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
-        print 1, "fsum_chunk", 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
+        write(*,fmt1) "sum r64"
+        write(*,fmt2)
+        write(*,fmt3) "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
+        write(*,fmt3) "    kahan" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
+        write(*,fmt3) "    chunk" , 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
         end if
 
         call check(error, all(err(:)<tolerance) )
@@ -216,11 +219,11 @@ subroutine test_fast_sum(error)
 
         if(verbose)then
         print *,""
-        print *,"================================================================"
-        print *," SUM on single precision values with mask"
-        print 1, "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
-        print 1, "fsum_kahan", 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
-        print 1, "fsum_chunk", 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
+        write(*,fmt1) "sum r32 mask"
+        write(*,fmt2)
+        write(*,fmt3) "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
+        write(*,fmt3) "    kahan" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
+        write(*,fmt3) "    chunk" , 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
         end if
 
         call check(error, all(err(:)<tolerance) )
@@ -257,11 +260,11 @@ subroutine test_fast_sum(error)
 
         if(verbose)then
         print *,""
-        print *,"================================================================"
-        print *," SUM on double precision values with mask"
-        print 1, "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
-        print 1, "fsum_kahan", 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
-        print 1, "fsum_chunk", 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
+        write(*,fmt1) "sum r64 mask"
+        write(*,fmt2)
+        write(*,fmt3) "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
+        write(*,fmt3) "    kahan" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
+        write(*,fmt3) "    chunk" , 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
         end if
 
         call check(error, all(err(:)<tolerance) )
@@ -278,7 +281,6 @@ subroutine test_fast_dotproduct(error)
     integer, parameter :: n = 1e5, ncalc = 3, niter = 1000
     integer :: iter, i
     real(dp) :: times(0:ncalc), times_tot(ncalc)
-    1 format(a10,': <time> = ',f9.4,' ns/eval, speed-up=',f8.2,'X, rel. error=',es16.4)
     !====================================================================================
     block
         integer, parameter :: wp=sp
@@ -306,11 +308,11 @@ subroutine test_fast_dotproduct(error)
 
         if(verbose)then
         print *,""
-        print *,"================================================================"
-        print *," dot product on single precision values "
-        print 1, "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
-        print 1, "prod_kahan", 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
-        print 1, "fprod"     , 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
+        write(*,fmt1) "dot r32"
+        write(*,fmt2)
+        write(*,fmt3) "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
+        write(*,fmt3) "    kahan", 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
+        write(*,fmt3) "    chunk", 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
         end if
 
         call check(error, all(err(:)<tolerance) )
@@ -343,11 +345,11 @@ subroutine test_fast_dotproduct(error)
 
         if(verbose)then
         print *,""
-        print *,"================================================================"
-        print *," dot product on single precision values "
-        print 1, "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
-        print 1, "prod_kahan", 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
-        print 1, "fprod"     , 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
+        write(*,fmt1) "dot r64"
+        write(*,fmt2)
+        write(*,fmt3) "intrinsic" , 1e9*times_tot(1)/(niter*n) , times_tot(1)/times_tot(1), err(1)
+        write(*,fmt3) "    kahan", 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err(2)
+        write(*,fmt3) "    chunk", 1e9*times_tot(3)/(niter*n) , times_tot(1)/times_tot(3), err(3)
         end if
 
         call check(error, all(err(:)<tolerance) )
@@ -361,15 +363,14 @@ subroutine test_fast_trigonometry(error)
     type(error_type), allocatable, intent(out) :: error
 
     !> Internal parameters and variables
-    integer, parameter :: n = 1e5, ncalc = 2, niter = 100
+    integer, parameter :: n = 5e5, ncalc = 2, niter = 500
     integer :: i, iter
     real(dp) :: times(0:ncalc), times_tot(ncalc)
-    1 format(a10,': <time> = ',f9.4,' ns/eval, speed-up=',f8.2,'X, rel. error=',es16.4)
     !====================================================================================
     if(verbose)then
         print *,""
-        print *,"================================================================"
-        print *," Fast trigonometric"
+        write(*,fmt1) "trigo"
+        write(*,fmt2)
     end if
     block
         integer, parameter :: wp=sp
@@ -390,7 +391,7 @@ subroutine test_fast_trigonometry(error)
         end do
         err = err / niter
 
-        if(verbose) print 1, "fsin r32" , 1e9*times_tot(2)/(niter*n), times_tot(1)/times_tot(2), err
+        if(verbose) write(*,fmt3) "fsin r32" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
 
         call check(error, err < tolerance )
         if (allocated(error)) return
@@ -414,7 +415,7 @@ subroutine test_fast_trigonometry(error)
         end do
         err = err / niter
 
-        if(verbose) print 1, "fsin r64" , 1e9*times_tot(2)/(niter*n), times_tot(1)/times_tot(2), err
+        if(verbose) write(*,fmt3) "fsin r64" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
 
         call check(error, err < tolerance )
         if (allocated(error)) return
@@ -439,7 +440,7 @@ subroutine test_fast_trigonometry(error)
         end do
         err = err / niter
 
-        if(verbose) print 1, "facos r32" , 1e9*times_tot(2)/(niter*n), times_tot(1)/times_tot(2), err
+        if(verbose) write(*,fmt3) "facos r32" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
 
         call check(error, err < tolerance )
         if (allocated(error)) return
@@ -463,7 +464,7 @@ subroutine test_fast_trigonometry(error)
         end do
         err = err / niter
 
-        if(verbose) print 1, "facos r64" , 1e9*times_tot(2)/(niter*n), times_tot(1)/times_tot(2), err
+        if(verbose) write(*,fmt3) "facos r64" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
 
         call check(error, err < tolerance )
         if (allocated(error)) return
@@ -476,15 +477,14 @@ subroutine test_fast_hyperbolic(error)
     type(error_type), allocatable, intent(out) :: error
 
     !> Internal parameters and variables
-    integer, parameter :: n = 1e5, ncalc = 2, niter = 100
+    integer, parameter :: n = 5e5, ncalc = 2, niter = 500
     integer :: i, iter
     real(dp) :: times(0:ncalc), times_tot(ncalc)
-    1 format(a10,': <time> = ',f9.4,' ns/eval, speed-up=',f8.2,'X, rel. error=',es16.4)
     !====================================================================================
     if(verbose)then
         print *,""
-        print *,"================================================================"
-        print *," Fast hyperbolic"
+        write(*,fmt1) "hyperb"
+        write(*,fmt2)
     end if
     block
         integer, parameter :: wp=sp
@@ -505,7 +505,7 @@ subroutine test_fast_hyperbolic(error)
         end do
         err = err / niter
 
-        if(verbose) print 1, "ftanh r32" , 1e9*times_tot(2)/(niter*n), times_tot(1)/times_tot(2), err
+        if(verbose) write(*,fmt3) "ftanh r32" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
 
         call check(error, err < tolerance )
         if (allocated(error)) return
@@ -529,7 +529,7 @@ subroutine test_fast_hyperbolic(error)
         end do
         err = err / niter
 
-        if(verbose) print 1, "ftanh r64" , 1e9*times_tot(2)/(niter*n), times_tot(1)/times_tot(2), err
+        if(verbose) write(*,fmt3) "ftanh r64" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
 
         call check(error, err < tolerance )
         if (allocated(error)) return
@@ -554,7 +554,7 @@ subroutine test_fast_hyperbolic(error)
         end do
         err = err / niter
 
-        if(verbose)print 1, "ferf r32" , 1e9*times_tot(2)/(niter*n), times_tot(1)/times_tot(2), err
+        if(verbose) write(*,fmt3) "ferf r32" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
 
         call check(error, err < tolerance )
         if (allocated(error)) return
@@ -578,7 +578,7 @@ subroutine test_fast_hyperbolic(error)
         end do
         err = err / niter
 
-        if(verbose)print 1, "ferf r32" , 1e9*times_tot(2)/(niter*n), times_tot(1)/times_tot(2), err
+        if(verbose) write(*,fmt3) "ferf r64" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
 
         call check(error, err < tolerance )
         if (allocated(error)) return
@@ -591,15 +591,14 @@ subroutine test_fast_rsqrt(error)
     type(error_type), allocatable, intent(out) :: error
 
     !> Internal parameters and variables
-    integer, parameter :: n = 1e5, ncalc = 2, niter = 100
+    integer, parameter :: n = 5e5, ncalc = 2, niter = 500
     integer :: iter, i
     real(dp) :: times(0:ncalc), times_tot(ncalc)
-    1 format(a10,': <time> = ',f9.4,' ns/eval, speed-up=',f8.2,'X, rel. error=',es16.4)
     !====================================================================================
     if(verbose)then
         print *,""
-        print *,"================================================================"
-        print *," Fast rsqrt = 1/sqrt(x)"
+        write(*,fmt1) "rsqrt"
+        write(*,fmt2)
     end if
     block
         integer, parameter :: wp=sp
@@ -622,7 +621,7 @@ subroutine test_fast_rsqrt(error)
         end do
         err = err / niter
 
-        if(verbose)print 1, "frsqrt r32" , 1e9*times_tot(2)/(niter*n), times_tot(1)/times_tot(2), err
+        if(verbose) write(*,fmt3) "frsqrt r32" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
 
         call check(error, err < tolerance )
         if (allocated(error)) return
@@ -647,7 +646,7 @@ subroutine test_fast_rsqrt(error)
         end do
         err = err / niter
 
-        if(verbose)print 1, "frsqrt r64" , 1e9*times_tot(2)/(niter*n), times_tot(1)/times_tot(2), err
+        if(verbose) write(*,fmt3) "frsqrt r64" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
 
         call check(error, err < tolerance )
         if (allocated(error)) return
