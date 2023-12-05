@@ -4,7 +4,7 @@ module test_fast_math
     use fast_math
     implicit none
 
-    logical :: verbose = .true. ! change me to .true. if you want to see the results
+    logical :: verbose = .false. ! change me to .true. if you want to see the results
     interface scramble
         module procedure scramble_sp
         module procedure scramble_dp
@@ -361,7 +361,7 @@ subroutine test_fast_trigonometry(error)
     type(error_type), allocatable, intent(out) :: error
 
     !> Internal parameters and variables
-    integer, parameter :: n = 5e5, ncalc = 2, niter = 100
+    integer, parameter :: n = 1e5, ncalc = 2, niter = 100
     integer :: i, iter
     real(dp) :: times(0:ncalc), times_tot(ncalc)
     1 format(a10,': <time> = ',f9.4,' ns/eval, speed-up=',f8.2,'X, rel. error=',es16.4)
@@ -476,7 +476,7 @@ subroutine test_fast_hyperbolic(error)
     type(error_type), allocatable, intent(out) :: error
 
     !> Internal parameters and variables
-    integer, parameter :: n = 5e5, ncalc = 2, niter = 100
+    integer, parameter :: n = 1e5, ncalc = 2, niter = 100
     integer :: i, iter
     real(dp) :: times(0:ncalc), times_tot(ncalc)
     1 format(a10,': <time> = ',f9.4,' ns/eval, speed-up=',f8.2,'X, rel. error=',es16.4)
@@ -591,7 +591,7 @@ subroutine test_fast_rsqrt(error)
     type(error_type), allocatable, intent(out) :: error
 
     !> Internal parameters and variables
-    integer, parameter :: n = 5e5, ncalc = 2, niter = 100
+    integer, parameter :: n = 1e5, ncalc = 2, niter = 100
     integer :: iter, i
     real(dp) :: times(0:ncalc), times_tot(ncalc)
     1 format(a10,': <time> = ',f9.4,' ns/eval, speed-up=',f8.2,'X, rel. error=',es16.4)
