@@ -10,7 +10,6 @@
 !   ***********************************************************************************************
 module fast_rsqrt
     use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
-    use fast_utilities
     implicit none
     private
     
@@ -22,7 +21,11 @@ module fast_rsqrt
         module procedure frsqrt_dp
         module procedure frsqrt_sp
     end interface
-    
+
+#ifdef __NVCOMPILER
+    include 'utilities/nvidia_shift_interface.inc'
+#endif
+
 contains
 
     elemental function frsqrt_sp(x) result(y)
@@ -52,7 +55,7 @@ contains
         !! 2 iter > precision at 1e-6
         !! 3 iter > precision at 1e-11
         integer, parameter :: wp = dp
-        integer, parameter :: ninter = 2
+        integer, parameter :: ninter = 1
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
@@ -71,5 +74,8 @@ contains
         end do
         y = y2
     end function frsqrt_dp
-    
+
+#ifdef __NVCOMPILER
+    include 'utilities/nvidia_shift.inc'
+#endif
 end module fast_rsqrt

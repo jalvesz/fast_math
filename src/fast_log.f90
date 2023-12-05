@@ -10,7 +10,6 @@
 !   ***********************************************************************************************
 module fast_log
     use, intrinsic :: iso_fortran_env, only: sp=>real32, dp=>real64
-    use fast_utilities
     implicit none
     private
     
@@ -22,6 +21,10 @@ module fast_log
     interface flog_p5
         module procedure flog_p5_dp
     end interface
+
+#ifdef __NVCOMPILER
+    include 'utilities/nvidia_shift_interface.inc'
+#endif
     
 contains
 
@@ -90,5 +93,8 @@ contains
         y = (xf+xi)*log2
 
     end function flog_p5_dp
-    
+
+#ifdef __NVCOMPILER
+    include 'utilities/nvidia_shift.inc'
+#endif
 end module fast_log
