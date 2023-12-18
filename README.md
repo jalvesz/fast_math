@@ -46,7 +46,7 @@ ford ford.yml
 # Elapsed time examples and precision
 Warning: The following values are just references as to see how different can they be between different compilers. Actual speed-ups(downs) should be measured under the true use conditions to account for (lack-off) inlinement, etc etc. Results obtained using a Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz   2.89 GHz.
 <details>
-<summary>WSL2 gfortran 13.2 > fpm test --flag "-cpp -O3 -march=native -flto"</summary>
+<summary>(Click to unfold) WSL2 gfortran 13.2 > fpm test --flag "-cpp -O3 -march=native -flto"</summary>
 
 |      sum r32 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
@@ -105,7 +105,7 @@ Warning: The following values are just references as to see how different can th
 </details>
 
 <details>
-<summary>WSL2 nvfortran 23.9 > fpm test --flag "-Mpreprocess -fast -Minline"</summary>
+<summary>(Click to unfold) WSL2 nvfortran 23.9 > fpm test --flag "-Mpreprocess -fast -Minline"</summary>
 
 |      sum r32 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
@@ -165,7 +165,7 @@ Warning: The following values are just references as to see how different can th
 </details>
 
 <details>
-<summary>WSL2 ifort 2021.10.0 > fpm test --flag "-fpp -O3 -xHost -ipo"</summary>
+<summary>(Click to unfold) WSL2 ifort 2021.10.0 > fpm test --flag "-fpp -O3 -xHost -ipo"</summary>
 
 |      sum r32 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
@@ -224,7 +224,7 @@ Warning: The following values are just references as to see how different can th
 </details>
 
 <details>
-<summary>Windows ifx 2023.2.0 > fpm test --flag "-fpp -O3 -xHost -ipo"</summary>
+<summary>(Click to unfold) Windows ifx 2023.2.0 > fpm test --flag "-fpp -O3 -xHost -ipo"</summary>
 
 |      sum r32 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
