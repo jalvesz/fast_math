@@ -470,6 +470,55 @@ subroutine test_fast_trigonometry(error)
         if (allocated(error)) return
     end block
 
+    block
+        integer, parameter :: wp=sp
+        real(wp), allocatable :: x(:) , y(:), yref(:)
+        real(kind=wp) :: err, tolerance = 1e-5_wp
+        !> define a linspace between [-3,3]
+        allocate( x(n) , y(n), yref(n) )
+        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*3._wp , i = 1, n) ]
+
+        times_tot(:) = 0
+        err = 0._wp
+        do iter=1,niter
+            times(0) = timer()
+            yref = atan(x); times(1) = timer()
+            y = fatan(x)  ; times(2) = timer()
+            times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
+            err = err + sqrt( sum( y - yref )**2 / n )
+        end do
+        err = err / niter
+
+        if(verbose) write(*,fmt3) "fatan r32" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
+
+        call check(error, err < tolerance )
+        if (allocated(error)) return
+    end block
+    block
+        integer, parameter :: wp=dp
+        real(wp), allocatable :: x(:) , y(:), yref(:)
+        real(kind=wp) :: err, tolerance = 1e-5_wp
+        !> define a linspace between [-3,3]
+        allocate( x(n) , y(n), yref(n) )
+        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*3._wp , i = 1, n) ]
+
+        times_tot(:) = 0
+        err = 0._wp
+        do iter=1,niter
+            times(0) = timer()
+            yref = atan(x); times(1) = timer()
+            y = fatan(x)  ; times(2) = timer()
+            times_tot(:) = times_tot(:) + times(1:ncalc) - times(0:ncalc-1)
+            err = err + sqrt( sum( y - yref )**2 / n )
+        end do
+        err = err / niter
+
+        if(verbose) write(*,fmt3) "fatan r64" , 1e9*times_tot(2)/(niter*n) , times_tot(1)/times_tot(2), err
+
+        call check(error, err < tolerance )
+        if (allocated(error)) return
+    end block
+
 end subroutine
 
 subroutine test_fast_hyperbolic(error)

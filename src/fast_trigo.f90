@@ -10,7 +10,7 @@ module fast_trigo
     private
     
     public :: fsin, fcos, ftan
-    public :: facos, facos_nvidia
+    public :: facos, facos_nvidia, fatan
     
     interface fcos
         module procedure fcos_sp
@@ -36,6 +36,12 @@ module fast_trigo
     !! Source : https://developer.download.nvidia.com/cg/acos.html
         module procedure facos_nvidia_sp
         module procedure facos_nvidia_dp
+    end interface
+
+    interface fatan
+    !! Source : https://www.dsprelated.com/showarticle/1052.php
+        module procedure fatan_sp
+        module procedure fatan_dp
     end interface
     
     contains
@@ -176,6 +182,52 @@ module fast_trigo
         y = y * xp + 1.5707288_wp
         y = y * sqrt(1_wp-xp)
         y = y + negate * (- 2.0_wp * y + 3.14159265358979_wp)
+    end function
+
+    elemental function fatan_sp( x ) result( y )
+        integer, parameter :: wp = sp
+        real(wp), intent(in) :: x
+        real(wp) :: y
+        !-- Internal Variables
+        real(wp), parameter :: hpi = acos(-1.0_wp)/2._wp
+        real(wp) :: inv_x
+        !---------------------------------------------
+        if(abs(x)<1._wp)then
+          y = base( x )
+        else
+          inv_x = 1._wp / x
+          y = hpi * sign(1._wp,x)  - base( inv_x )
+        end if
+    contains
+        real(wp) elemental function base( x ) result( y )
+            real(wp), intent(in) :: x
+            real(wp), parameter :: n1 = 0.97239411_wp
+            real(wp), parameter :: n2 = -0.19194795_wp
+            y = (n1 + n2 * x * x) * x
+        end function
+    end function
+
+    elemental function fatan_dp( x ) result( y )
+        integer, parameter :: wp = dp
+        real(wp), intent(in) :: x
+        real(wp) :: y
+        !-- Internal Variables
+        real(wp), parameter :: hpi = acos(-1.0_wp)/2._wp
+        real(wp) :: inv_x
+        !---------------------------------------------
+        if(abs(x)<1._wp)then
+          y = base( x )
+        else
+          inv_x = 1._wp / x
+          y = hpi * sign(1._wp,x)  - base( inv_x )
+        end if
+    contains
+        real(wp) elemental function base( x ) result( y )
+            real(wp), intent(in) :: x
+            real(wp), parameter :: n1 = 0.97239411_wp
+            real(wp), parameter :: n2 = -0.19194795_wp
+            y = (n1 + n2 * x * x) * x
+        end function
     end function
     
 end module
