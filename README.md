@@ -15,6 +15,7 @@ In order to get the maximum performance of this library, compile with "-O3 -marc
 | tan      | `ftan`                | `elemental`|`real32` `real64` |
 | tanh     | `ftanh`               | `elemental`|`real32` `real64` |
 | acos     | `facos`               | `elemental`|`real32` `real64` |
+| atan     | `fatan`               | `elemental`|`real32` `real64` |
 | erf      | `ferf`                | `elemental`|`real32` `real64` |
 | log      | `flog_p3` `flog_p5`   | `elemental`|         `real64` |
 | rsqrt(3) | `frsqrt`              | `elemental`|`real32` `real64` |
