@@ -39,6 +39,7 @@ jobs:
 
       - run: |
           export FPM_FC=${{ env.FC }}
+          cd ../..
           fpm test --flag "-O3"
     #      ${{ env.FC }} ... # environment vars FC, CC, and CXX are set
     #      ${{ steps.setup-fortran.outputs.fc }} ... # outputs work too
