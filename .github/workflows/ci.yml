@@ -32,6 +32,10 @@ jobs:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
 
+      - name: Setup Fortran Package Manager
+        uses: fortran-lang/setup-fpm@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - run: |
-          ${{ env.FC }} ... # environment vars FC, CC, and CXX are set
-          ${{ steps.setup-fortran.outputs.fc }} ... # outputs work too
+          fpm test --compiler gfortran --flag "-03"
