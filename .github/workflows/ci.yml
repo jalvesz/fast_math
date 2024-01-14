@@ -41,7 +41,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          export FPM_FC=${{ env.FC }}
           fpm test --flag "${{ join(matrix.toolchain.flags, ' ') }}"
     #      ${{ env.FC }} ... # environment vars FC, CC, and CXX are set
     #      ${{ steps.setup-fortran.outputs.fc }} ... # outputs work too
