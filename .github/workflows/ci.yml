@@ -38,4 +38,5 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          fpm test --compiler gfortran --flag "-03"
+          ${{ env.FC }} ... # environment vars FC, CC, and CXX are set
+          ${{ steps.setup-fortran.outputs.fc }} ... # outputs work too
