@@ -10,10 +10,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         toolchain:
-          - {compiler: gcc, version: 13, flags: ['-cpp -O3 -march=native -flto']}
-          - {compiler: intel, version: '2023.2', flags: ['-fpp -O3 -xHost -ipo']}
-          - {compiler: intel-classic, version: '2021.10', flags: ['-fpp -O3 -xHost -ipo']}
-          - {compiler: nvidia-hpc, version: '23.11', flags: ['-Mpreprocess -fast -Minline']}
+          - {compiler: gcc, version: 13, flags: ['-cpp -O3 -march=native']}
+          - {compiler: intel, version: '2023.2', flags: ['-cpp -O3 -xHost']}
+          - {compiler: intel-classic, version: '2021.10', flags: ['-cpp -O3 -xHost']}
+          - {compiler: nvidia-hpc, version: '23.11', flags: ['-Mpreprocess -fast']}
         include:
           - os: ubuntu-latest
             toolchain: {compiler: gcc, version: 12}
