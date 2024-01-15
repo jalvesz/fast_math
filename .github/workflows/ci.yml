@@ -44,8 +44,8 @@ jobs:
         if: contains( matrix.os, 'macos')
         run: |
           brew reinstall gcc@13
-          ln -s /usr/local/lib/gcc/13.2.0/libgfortran.5.dylib /usr/local/lib/
-          ln -s /usr/local/lib/gcc/13.2.0/libquadmath.0.dylib /usr/local/lib/
+          ln -s /usr/local/lib/gcc/13/libgfortran.5.dylib /usr/local/lib/
+          ln -s /usr/local/lib/gcc/13/libquadmath.0.dylib /usr/local/lib/
 
       - run: |
           fpm test --compiler ${{ env.FC }} --c-compiler ${{ env.CC }} --cxx-compiler ${{ env.CXX }} --flag "${{ join(matrix.toolchain.flags, ' ') }}"
