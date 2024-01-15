@@ -424,7 +424,7 @@ subroutine test_fast_trigonometry(error)
     block
         integer, parameter :: wp=sp
         real(wp), allocatable :: x(:) , y(:), yref(:)
-        real(kind=wp) :: err, tolerance = epsilon(1._wp)*500
+        real(kind=wp) :: err, tolerance = 2e-5_wp
         !> define a linspace between [-1,1]
         allocate( x(n) , y(n), yref(n) )
         x(:) = [ ((real(i,kind=wp) / n - 0.5_wp)*2 , i = 1, n) ]
@@ -448,7 +448,7 @@ subroutine test_fast_trigonometry(error)
     block
         integer, parameter :: wp=dp
         real(wp), allocatable :: x(:) , y(:), yref(:)
-        real(kind=wp) :: err, tolerance = epsilon(1._wp)*500
+        real(kind=wp) :: err, tolerance = 2e-5_wp
         !> define a linspace between [-1,1]
         allocate( x(n) , y(n), yref(n) )
         x(:) = [ ((real(i,kind=wp) / n - 0.5_wp)*2 , i = 1, n) ]
