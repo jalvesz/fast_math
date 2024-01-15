@@ -41,11 +41,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Fortran on MacOS
-        if: contains( matrix.os, 'macos') && contains( matrix.toolchain.compiler, 'gcc')
+        if: contains( matrix.os, 'macos')
         run: |
-          brew reinstall gcc@${{ matrix.toolchain.version }}
-          ln -s /usr/local/lib/gcc/${{ matrix.toolchain.version }}/libgfortran.5.dylib /usr/local/lib/
-          ln -s /usr/local/lib/gcc/${{ matrix.toolchain.version }}/libquadmath.0.dylib /usr/local/lib/
+          brew reinstall gcc@13
+          ln -s /usr/local/lib/gcc/13.2.0/libgfortran.5.dylib /usr/local/lib/
+          ln -s /usr/local/lib/gcc/13.2.0/libquadmath.0.dylib /usr/local/lib/
 
       - run: |
           fpm test --compiler ${{ env.FC }} --c-compiler ${{ env.CC }} --cxx-compiler ${{ env.CXX }} --flag "${{ join(matrix.toolchain.flags, ' ') }}"
