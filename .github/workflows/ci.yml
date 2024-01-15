@@ -41,7 +41,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Fortran on MacOS
-        if: contains( matrix.os, 'macos')
+        if: contains( matrix.os, 'macos') && contains( matrix.toolchain., 'gcc')
         run: |
           brew reinstall gcc@${{ matrix.toolchain.version }}
           ln -s /usr/local/lib/gcc/${{ matrix.toolchain.version }}/libgfortran.5.dylib /usr/local/lib/
