@@ -40,8 +40,6 @@ ford ford.yml
 
 # TODO
 * Contribution guidelines
-* Finalize naming convention
-* Integrate github CICD
 * Polish autodoc
 
 # Elapsed time examples and precision
