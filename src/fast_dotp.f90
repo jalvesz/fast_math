@@ -50,13 +50,13 @@ module fast_dotp
         rr = n - dr*chunk
         
         abatch(:) = 0.0_wp
-        do concurrent( i = 1:dr )
+        do i = 1, dr
           abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)*b(chunk*i-chunk+1:chunk*i)
         end do
         abatch(1:rr) = abatch(1:rr) + a(n-rr+1:n)*b(n-rr+1:n)
         
         p = 0.0_wp
-        do concurrent( i = chunk/2:1:-1 )
+        do i = 1, chunk/2
           p = p + abatch(i)+abatch(chunk/2+i)
         end do
     end function
@@ -76,13 +76,13 @@ module fast_dotp
         rr = n - dr*chunk
         
         abatch(:) = 0.0_wp
-        do concurrent( i = 1:dr )
+        do i = 1, dr
           abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)*b(chunk*i-chunk+1:chunk*i)
         end do
         abatch(1:rr) = abatch(1:rr) + a(n-rr+1:n)*b(n-rr+1:n)
         
         p = 0.0_wp
-        do concurrent( i = chunk/2:1:-1 )
+        do i = 1, chunk/2
           p = p + abatch(i)+abatch(chunk/2+i)
         end do
     end function
@@ -103,13 +103,13 @@ module fast_dotp
         rr = n - dr*chunk
         
         abatch(:) = 0.0_wp
-        do concurrent( i = 1:dr )
+        do i = 1, dr
           abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)*b(chunk*i-chunk+1:chunk*i)*w(chunk*i-chunk+1:chunk*i)
         end do
         abatch(1:rr) = abatch(1:rr) + a(n-rr+1:n)*b(n-rr+1:n)*w(n-rr+1:n)
         
         p = 0.0_wp
-        do concurrent( i = chunk/2:1:-1 )
+        do i = 1, chunk/2
           p = p + abatch(i)+abatch(chunk/2+i)
         end do
     end function
@@ -130,13 +130,13 @@ module fast_dotp
         rr = n - dr*chunk
         
         abatch(:) = 0.0_wp
-        do concurrent( i = 1:dr )
+        do i = 1, dr
           abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)*b(chunk*i-chunk+1:chunk*i)*w(chunk*i-chunk+1:chunk*i)
         end do
         abatch(1:rr) = abatch(1:rr) + a(n-rr+1:n)*b(n-rr+1:n)*w(n-rr+1:n)
         
         p = 0.0_wp
-        do concurrent( i = chunk/2:1:-1 )
+        do i = 1, chunk/2
           p = p + abatch(i)+abatch(chunk/2+i)
         end do
     end function
@@ -156,9 +156,9 @@ module fast_dotp
         dr = n/chunk
         rr = n - dr*chunk
         
-        sbatch(:) = 0.0_wp
-        cbatch(:) = 0.0_wp
-        do concurrent( i = 1:dr )
+        sbatch = 0.0_wp
+        cbatch = 0.0_wp
+        do i = 1, dr
           call vkahans( a(chunk*i-chunk+1:chunk*i) * b(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
         end do
         call vkahans( a(size(a)-rr+1:size(a)) * b(size(a)-rr+1:size(a)), sbatch(1:rr), cbatch(1:rr) ) 
@@ -184,9 +184,9 @@ module fast_dotp
         dr = n/chunk
         rr = n - dr*chunk
         
-        sbatch(:) = 0.0_wp
-        cbatch(:) = 0.0_wp
-        do concurrent( i = 1:dr )
+        sbatch = 0.0_wp
+        cbatch = 0.0_wp
+        do i = 1, dr
           call vkahans( a(chunk*i-chunk+1:chunk*i) * b(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
         end do
         call vkahans( a(size(a)-rr+1:size(a)) * b(size(a)-rr+1:size(a)), sbatch(1:rr), cbatch(1:rr) ) 
@@ -213,9 +213,9 @@ module fast_dotp
         dr = n/chunk
         rr = n - dr*chunk
         
-        sbatch(:) = 0.0_wp
-        cbatch(:) = 0.0_wp
-        do concurrent( i = 1:dr )
+        sbatch = 0.0_wp
+        cbatch = 0.0_wp
+        do i = 1, dr
           call vkahans( a(chunk*i-chunk+1:chunk*i) * b(chunk*i-chunk+1:chunk*i) * &
                 w(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
         end do
@@ -243,9 +243,9 @@ module fast_dotp
         dr = n/chunk
         rr = n - dr*chunk
         
-        sbatch(:) = 0.0_wp
-        cbatch(:) = 0.0_wp
-        do concurrent( i = 1:dr )
+        sbatch = 0.0_wp
+        cbatch = 0.0_wp
+        do i = 1, dr
           call vkahans( a(chunk*i-chunk+1:chunk*i) * b(chunk*i-chunk+1:chunk*i) * &
                 w(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
         end do

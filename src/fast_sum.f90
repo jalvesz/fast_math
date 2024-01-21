@@ -50,13 +50,13 @@ module fast_sum
       rr = size(a) - dr*chunk
       
       abatch(:) = 0.0_wp
-      do concurrent( i = 1:dr )
+      do i = 1, dr
         abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)
       end do
       abatch(1:rr) = abatch(1:rr) + a(size(a)-rr+1:size(a))
       
       sout = 0.0_wp
-      do concurrent( i = chunk/2:1:-1 )
+      do i = 1, chunk/2
         sout = sout + abatch(i)+abatch(chunk/2+i)
       end do
   end function
@@ -74,13 +74,13 @@ module fast_sum
       rr = size(a) - dr*chunk
       
       abatch(:) = 0.0_wp
-      do concurrent( i = 1:dr )
+      do i = 1, dr
         abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)
       end do
       abatch(1:rr) = abatch(1:rr) + a(size(a)-rr+1:size(a))
 
       sout = 0.0_wp
-      do concurrent( i = chunk/2:1:-1 )
+      do i = 1, chunk/2
         sout = sout + abatch(i)+abatch(chunk/2+i)
       end do
   end function
@@ -99,13 +99,13 @@ module fast_sum
       rr = size(a) - dr*chunk
       
       abatch(:) = 0.0_wp
-      do concurrent( i = 1:dr )
+      do i = 1, dr
         where(mask(chunk*i-chunk+1:chunk*i)) abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)
       end do
       where(mask(size(a)-rr+1:size(a))) abatch(1:rr) = abatch(1:rr) + a(size(a)-rr+1:size(a))
 
       sout = 0.0_wp
-      do concurrent( i = chunk/2:1:-1)
+      do i = 1, chunk/2
         sout = sout + abatch(i)+abatch(chunk/2+i)
       end do
   end function
@@ -124,13 +124,13 @@ module fast_sum
       rr = size(a) - dr*chunk
       
       abatch(:) = 0.0_wp
-      do concurrent( i = 1:dr )
+      do i = 1, dr
         where(mask(chunk*i-chunk+1:chunk*i)) abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)
       end do
       where(mask(size(a)-rr+1:size(a))) abatch(1:rr) = abatch(1:rr) + a(size(a)-rr+1:size(a))
 
       sout = 0.0_wp
-      do concurrent( i = chunk/2:1:-1)
+      do i = 1, chunk/2
         sout = sout + abatch(i)+abatch(chunk/2+i)
       end do
   end function
@@ -147,9 +147,9 @@ module fast_sum
       ! -----------------------------
       dr = size(a)/(chunk)
       rr = size(a) - dr*chunk     
-      sbatch(:) = 0.0_wp
-      cbatch(:) = 0.0_wp
-      do concurrent( i = 1:dr )
+      sbatch = 0.0_wp
+      cbatch = 0.0_wp
+      do i = 1, dr
         call vkahans( a(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
       end do
       call vkahans( a(size(a)-rr+1:size(a)) , sbatch(1:rr) , cbatch(1:rr) )      
@@ -172,9 +172,9 @@ module fast_sum
       ! -----------------------------
       dr = size(a)/(chunk)
       rr = size(a) - dr*chunk     
-      sbatch(:) = 0.0_wp
-      cbatch(:) = 0.0_wp
-      do concurrent( i = 1:dr )
+      sbatch = 0.0_wp
+      cbatch = 0.0_wp
+      do i = 1, dr
         call vkahans( a(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
       end do
       call vkahans( a(size(a)-rr+1:size(a)) , sbatch(1:rr) , cbatch(1:rr) )      
@@ -198,12 +198,14 @@ module fast_sum
       ! -----------------------------
       dr = size(a)/(chunk)
       rr = size(a) - dr*chunk     
-      sbatch(:) = 0.0_wp
-      cbatch(:) = 0.0_wp
-      do concurrent( i = 1:dr , j=1:chunk )
-        if(mask(chunk*i-chunk+j)) call vkahans( a(chunk*i-chunk+j), sbatch(j) , cbatch(j) )
+      sbatch = 0.0_wp
+      cbatch = 0.0_wp
+      do i = 1, dr
+        do j = 1, chunk
+          if(mask(chunk*i-chunk+j)) call vkahans( a(chunk*i-chunk+j), sbatch(j) , cbatch(j) )
+        end do
       end do
-      do concurrent( i = 1:rr )
+      do i = 1, rr
         if(mask(size(a)-rr+i)) call vkahans( a(size(a)-rr+i), sbatch(i) , cbatch(i) )
       end do
 
@@ -226,12 +228,14 @@ module fast_sum
       ! -----------------------------
       dr = size(a)/(chunk)
       rr = size(a) - dr*chunk     
-      sbatch(:) = 0.0_wp
-      cbatch(:) = 0.0_wp
-      do concurrent( i = 1:dr , j=1:chunk )
-        if(mask(chunk*i-chunk+j)) call vkahans( a(chunk*i-chunk+j), sbatch(j) , cbatch(j) )
+      sbatch = 0.0_wp
+      cbatch = 0.0_wp
+      do i = 1, dr
+        do j = 1, chunk
+          if(mask(chunk*i-chunk+j)) call vkahans( a(chunk*i-chunk+j), sbatch(j) , cbatch(j) )
+        end do
       end do
-      do concurrent( i = 1:rr )
+      do i = 1, rr
         if(mask(size(a)-rr+i)) call vkahans( a(size(a)-rr+i), sbatch(i) , cbatch(i) )
       end do
 
