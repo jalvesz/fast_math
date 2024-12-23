@@ -106,7 +106,7 @@ module fast_sum
       do i = 1, dr
         abatch(1:chunk) = abatch(1:chunk) + merge( a(chunk*i-chunk+1:chunk*i) , 0.0_wp , mask(chunk*i-chunk+1:chunk*i) )
       end do
-      abatch(1:chunk) = abatch(1:chunk) + merge( a(size(a)-rr+1:size(a)) , 0.0_wp , mask(size(a)-rr+1:size(a)) )
+      abatch(1:rr) = abatch(1:rr) + merge( a(size(a)-rr+1:size(a)) , 0.0_wp , mask(size(a)-rr+1:size(a)) )
 
       sout = 0.0_wp
       do i = 1, chunk/2
@@ -131,7 +131,7 @@ module fast_sum
       do i = 1, dr
         abatch(1:chunk) = abatch(1:chunk) + merge( a(chunk*i-chunk+1:chunk*i) , 0.0_wp , mask(chunk*i-chunk+1:chunk*i) )
       end do
-      abatch(1:chunk) = abatch(1:chunk) + merge( a(size(a)-rr+1:size(a)) , 0.0_wp , mask(size(a)-rr+1:size(a)) )
+      abatch(1:rr) = abatch(1:rr) + merge( a(size(a)-rr+1:size(a)) , 0.0_wp , mask(size(a)-rr+1:size(a)) )
 
       sout = 0.0_wp
       do i = 1, chunk/2
