@@ -34,6 +34,10 @@ module fast_sum
       module procedure vkahans_sp
       module procedure vkahans_dp
   end interface
+  interface vkahans_m
+      module procedure vkahans_m_sp
+      module procedure vkahans_m_dp
+  end interface
 
   contains
 
@@ -100,9 +104,9 @@ module fast_sum
       
       abatch(:) = 0.0_wp
       do i = 1, dr
-        where(mask(chunk*i-chunk+1:chunk*i)) abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)
+        abatch(1:chunk) = abatch(1:chunk) + merge( a(chunk*i-chunk+1:chunk*i) , 0.0_wp , mask(chunk*i-chunk+1:chunk*i) )
       end do
-      where(mask(size(a)-rr+1:size(a))) abatch(1:rr) = abatch(1:rr) + a(size(a)-rr+1:size(a))
+      abatch(1:chunk) = abatch(1:chunk) + merge( a(size(a)-rr+1:size(a)) , 0.0_wp , mask(size(a)-rr+1:size(a)) )
 
       sout = 0.0_wp
       do i = 1, chunk/2
@@ -125,9 +129,9 @@ module fast_sum
       
       abatch(:) = 0.0_wp
       do i = 1, dr
-        where(mask(chunk*i-chunk+1:chunk*i)) abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)
+        abatch(1:chunk) = abatch(1:chunk) + merge( a(chunk*i-chunk+1:chunk*i) , 0.0_wp , mask(chunk*i-chunk+1:chunk*i) )
       end do
-      where(mask(size(a)-rr+1:size(a))) abatch(1:rr) = abatch(1:rr) + a(size(a)-rr+1:size(a))
+      abatch(1:chunk) = abatch(1:chunk) + merge( a(size(a)-rr+1:size(a)) , 0.0_wp , mask(size(a)-rr+1:size(a)) )
 
       sout = 0.0_wp
       do i = 1, chunk/2
@@ -201,13 +205,9 @@ module fast_sum
       sbatch = 0.0_wp
       cbatch = 0.0_wp
       do i = 1, dr
-        do j = 1, chunk
-          if(mask(chunk*i-chunk+j)) call vkahans( a(chunk*i-chunk+j), sbatch(j) , cbatch(j) )
-        end do
+        call vkahans_m( a(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk), mask(chunk*i-chunk+1:chunk*i) )
       end do
-      do i = 1, rr
-        if(mask(size(a)-rr+i)) call vkahans( a(size(a)-rr+i), sbatch(i) , cbatch(i) )
-      end do
+      call vkahans_m( a(size(a)-rr+1:size(a)) , sbatch(1:rr) , cbatch(1:rr), mask(size(a)-rr+1:size(a)) )
 
       sout = 0.0_wp
       do i = 1,chunk
@@ -231,13 +231,9 @@ module fast_sum
       sbatch = 0.0_wp
       cbatch = 0.0_wp
       do i = 1, dr
-        do j = 1, chunk
-          if(mask(chunk*i-chunk+j)) call vkahans( a(chunk*i-chunk+j), sbatch(j) , cbatch(j) )
-        end do
+        call vkahans_m( a(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk), mask(chunk*i-chunk+1:chunk*i) )
       end do
-      do i = 1, rr
-        if(mask(size(a)-rr+i)) call vkahans( a(size(a)-rr+i), sbatch(i) , cbatch(i) )
-      end do
+      call vkahans_m( a(size(a)-rr+1:size(a)) , sbatch(1:rr) , cbatch(1:rr), mask(size(a)-rr+1:size(a)) )
 
       sout = 0.0_wp
       do i = 1,chunk
@@ -253,6 +249,16 @@ module fast_sum
   elemental subroutine vkahans_dp(a,s,c)
   integer, parameter :: wp = dp
   include 'utilities/vkahans.inc'
+  end subroutine  
+
+  elemental subroutine vkahans_m_sp(a,s,c,m)
+  integer, parameter :: wp = sp
+  include 'utilities/vkahans_m.inc'
+  end subroutine  
+
+  elemental subroutine vkahans_m_dp(a,s,c,m)
+  integer, parameter :: wp = dp
+  include 'utilities/vkahans_m.inc'
   end subroutine  
 
 end module fast_sum
