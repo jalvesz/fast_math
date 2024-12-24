@@ -25,16 +25,10 @@ module fast_tanh
         !-- Internal Variables
         real(wp) :: x2, a, b
         !---------------------------------------------
-        if (x > 5_wp) then
-            y = 1_wp
-        elseif (x < -5_wp) then
-            y = -1_wp
-        else
-            x2 = x*x
-            a = x * (135135.0_wp + x2 * (17325.0_wp + x2 * (378.0_wp + x2)))
-            b = 135135.0_wp + x2 * (62370.0_wp + x2 * (3150.0_wp + x2 * 28.0_wp))
-            y = a / b
-        end if
+        x2 = x*x
+        a = x * (135135.0_wp + x2 * (17325.0_wp + x2 * (378.0_wp + x2)))
+        b = 135135.0_wp + x2 * (62370.0_wp + x2 * (3150.0_wp + x2 * 28.0_wp))
+        y = merge( a / b , sign(1.0_wp,x) , x2 <= 25._wp )
     end function
 
     elemental function ftanh_dp( x ) result( y )
@@ -44,16 +38,10 @@ module fast_tanh
         !-- Internal Variables
         real(wp) :: x2, a, b
         !---------------------------------------------
-        if (x > 5_wp) then
-            y = 1_wp
-        elseif (x < -5_wp) then
-            y = -1_wp
-        else
-            x2 = x*x
-            a = x * (135135.0_wp + x2 * (17325.0_wp + x2 * (378.0_wp + x2)))
-            b = 135135.0_wp + x2 * (62370.0_wp + x2 * (3150.0_wp + x2 * 28.0_wp))
-            y = a / b
-        end if
+        x2 = x*x
+        a = x * (135135.0_wp + x2 * (17325.0_wp + x2 * (378.0_wp + x2)))
+        b = 135135.0_wp + x2 * (62370.0_wp + x2 * (3150.0_wp + x2 * 28.0_wp))
+        y = merge( a / b , sign(1.0_wp,x) , x2 <= 25._wp )
     end function
     
 end module
