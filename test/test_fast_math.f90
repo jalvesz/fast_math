@@ -122,7 +122,10 @@ subroutine test_fast_sum(error)
         real(kind=wp), allocatable :: x(:)
         real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc), tolerance = epsilon(1._wp)*100
 
-        allocate(x(n) , source = [(8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2,i=1,n)] )
+        allocate(x(n))
+        do i = 1, n 
+            x(i) = 8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2
+        end do
         
         times_tot(:) = 0
         meanval(:) = 0._wp
@@ -158,7 +161,10 @@ subroutine test_fast_sum(error)
         real(kind=wp), allocatable :: x(:)
         real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc), tolerance = epsilon(1._wp)*100
 
-        allocate(x(n) , source = [(8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2,i=1,n)] )
+        allocate(x(n))
+        do i = 1, n 
+            x(i) = 8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2
+        end do
         
         times_tot(:) = 0
         meanval(:) = 0._wp
@@ -195,7 +201,10 @@ subroutine test_fast_sum(error)
         logical, allocatable :: mask(:), nmask(:)
         real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc), tolerance = epsilon(1._wp)*100
 
-        allocate(x(n) , source = [(8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2,i=1,n)] )
+        allocate(x(n))
+        do i = 1, n 
+            x(i) = 8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2
+        end do
         allocate(mask(n),source=.false.); mask(1:n:2) = .true.
         allocate(nmask(n))
 
@@ -236,7 +245,10 @@ subroutine test_fast_sum(error)
         logical, allocatable :: mask(:), nmask(:)
         real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc), tolerance = epsilon(1._wp)*100
 
-        allocate(x(n) , source = [(8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2,i=1,n)] )
+        allocate(x(n))
+        do i = 1, n 
+            x(i) = 8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2
+        end do
         allocate(mask(n),source=.false.); mask(1:n:2) = .true.
         allocate(nmask(n))
 
@@ -287,7 +299,10 @@ subroutine test_fast_dotproduct(error)
         real(kind=wp), allocatable :: x(:)
         real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc), tolerance = epsilon(1._wp)*100
 
-        allocate(x(n) , source = [(8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2,i=1,n)] )
+        allocate(x(n))
+        do i = 1, n 
+            x(i) = 8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2
+        end do
         x(:) = sqrt( x(:) )
 
         times_tot(:) = 0
@@ -324,7 +339,10 @@ subroutine test_fast_dotproduct(error)
         real(kind=wp), allocatable :: x(:)
         real(kind=wp) :: xsum(ncalc), meanval(ncalc), err(ncalc), tolerance = epsilon(1._wp)*100
 
-        allocate(x(n) , source = [(8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2,i=1,n)] )
+        allocate(x(n))
+        do i = 1, n 
+            x(i) = 8*atan(1._wp)*(real(i,kind=wp)-0.5_wp)/real(n,kind=wp)**2
+        end do
         x(:) = sqrt( x(:) )
 
         times_tot(:) = 0
@@ -378,7 +396,9 @@ subroutine test_fast_trigonometry(error)
         real(kind=wp) :: err, tolerance = epsilon(1._wp)*500
         !> define a linspace between [-pi,pi]
         allocate( x(n) , y(n), yref(n) )
-        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*acos(-1.0_wp) , i = 1, n) ]
+        do i = 1, n 
+            x(i) = 2*(real(i,kind=wp) / n - 0.5_wp)*acos(-1.0_wp)
+        end do
 
         times_tot(:) = 0
         err = 0._wp
@@ -402,7 +422,9 @@ subroutine test_fast_trigonometry(error)
         real(kind=wp) :: err, tolerance = epsilon(1._wp)*500
         !> define a linspace between [-pi,pi]
         allocate( x(n) , y(n), yref(n) )
-        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*acos(-1.0_wp) , i = 1, n) ]
+        do i = 1, n 
+            x(i) = 2*(real(i,kind=wp) / n - 0.5_wp)*acos(-1.0_wp)
+        end do
 
         times_tot(:) = 0
         err = 0._wp
@@ -427,7 +449,9 @@ subroutine test_fast_trigonometry(error)
         real(kind=wp) :: err, tolerance = 1e-4_wp
         !> define a linspace between [-1,1]
         allocate( x(n) , y(n), yref(n) )
-        x(:) = [ ((real(i,kind=wp) / n - 0.5_wp)*2 , i = 1, n) ]
+        do i = 1, n 
+            x(i) = (real(i,kind=wp) / n - 0.5_wp)*2
+        end do
 
         times_tot(:) = 0
         err = 0._wp
@@ -451,7 +475,9 @@ subroutine test_fast_trigonometry(error)
         real(kind=wp) :: err, tolerance = 1e-4_wp
         !> define a linspace between [-1,1]
         allocate( x(n) , y(n), yref(n) )
-        x(:) = [ ((real(i,kind=wp) / n - 0.5_wp)*2 , i = 1, n) ]
+        do i = 1, n 
+            x(i) = (real(i,kind=wp) / n - 0.5_wp)*2
+        end do
 
         times_tot(:) = 0
         err = 0._wp
@@ -476,7 +502,9 @@ subroutine test_fast_trigonometry(error)
         real(kind=wp) :: err, tolerance = 2e-5_wp
         !> define a linspace between [-3,3]
         allocate( x(n) , y(n), yref(n) )
-        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*3._wp , i = 1, n) ]
+        do i = 1, n 
+            x(i) = 2*(real(i,kind=wp) / n - 0.5_wp)*3._wp
+        end do
 
         times_tot(:) = 0
         err = 0._wp
@@ -500,7 +528,9 @@ subroutine test_fast_trigonometry(error)
         real(kind=wp) :: err, tolerance = 2e-5_wp
         !> define a linspace between [-3,3]
         allocate( x(n) , y(n), yref(n) )
-        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*3._wp , i = 1, n) ]
+        do i = 1, n 
+            x(i) = 2*(real(i,kind=wp) / n - 0.5_wp)*3._wp
+        end do
 
         times_tot(:) = 0
         err = 0._wp
@@ -541,7 +571,9 @@ subroutine test_fast_hyperbolic(error)
         real(kind=wp) :: err, tolerance = 1e-5_wp
         !> define a linspace between [-3,3]
         allocate( x(n) , y(n), yref(n) )
-        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*3._wp , i = 1, n) ]
+        do i = 1, n 
+            x(i) = 2*(real(i,kind=wp) / n - 0.5_wp)*3._wp
+        end do
 
         times_tot(:) = 0
         err = 0._wp
@@ -565,7 +597,9 @@ subroutine test_fast_hyperbolic(error)
         real(kind=wp) :: err, tolerance = 1e-5_wp
         !> define a linspace between [-3,3]
         allocate( x(n) , y(n), yref(n) )
-        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*3._wp , i = 1, n) ]
+        do i = 1, n 
+            x(i) = 2*(real(i,kind=wp) / n - 0.5_wp)*3._wp
+        end do
 
         times_tot(:) = 0
         err = 0._wp
@@ -590,7 +624,9 @@ subroutine test_fast_hyperbolic(error)
         real(kind=wp) :: err, tolerance = 1e-2_wp
         !> define a linspace between [-3,3]
         allocate( x(n) , y(n), yref(n) )
-        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*3._wp , i = 1, n) ]
+        do i = 1, n 
+            x(i) = 2*(real(i,kind=wp) / n - 0.5_wp)*3._wp
+        end do
 
         times_tot(:) = 0
         err = 0._wp
@@ -614,7 +650,9 @@ subroutine test_fast_hyperbolic(error)
         real(kind=wp) :: err, tolerance = 1e-2_wp
         !> define a linspace between [-3,3]
         allocate( x(n) , y(n), yref(n) )
-        x(:) = [ (2*(real(i,kind=wp) / n - 0.5_wp)*3._wp , i = 1, n) ]
+        do i = 1, n 
+            x(i) = 2*(real(i,kind=wp) / n - 0.5_wp)*3._wp
+        end do
 
         times_tot(:) = 0
         err = 0._wp
