@@ -190,21 +190,18 @@ module fast_trigo
         real(wp) :: y
         !-- Internal Variables
         real(wp), parameter :: hpi = acos(-1.0_wp)/2._wp
-        real(wp) :: inv_x
+        real(wp), parameter :: n1 = 0.97239411_wp
+        real(wp), parameter :: n2 = -0.19194795_wp
+        real(wp) :: ix
         !---------------------------------------------
         if(abs(x)<1._wp)then
-          y = base( x )
+            ix = x
+            y = 0._wp
         else
-          inv_x = 1._wp / x
-          y = hpi * sign(1._wp,x)  - base( inv_x )
+            ix = - 1._wp / x
+            y = hpi * sign(1._wp,x)
         end if
-    contains
-        real(wp) elemental function base( x ) result( y )
-            real(wp), intent(in) :: x
-            real(wp), parameter :: n1 = 0.97239411_wp
-            real(wp), parameter :: n2 = -0.19194795_wp
-            y = (n1 + n2 * x * x) * x
-        end function
+        y = y + (n1 + n2 * ix *ix) * ix
     end function
 
     elemental function fatan_dp( x ) result( y )
@@ -213,21 +210,18 @@ module fast_trigo
         real(wp) :: y
         !-- Internal Variables
         real(wp), parameter :: hpi = acos(-1.0_wp)/2._wp
-        real(wp) :: inv_x
+        real(wp), parameter :: n1 = 0.97239411_wp
+        real(wp), parameter :: n2 = -0.19194795_wp
+        real(wp) :: ix
         !---------------------------------------------
         if(abs(x)<1._wp)then
-          y = base( x )
+            ix = x
+            y = 0._wp
         else
-          inv_x = 1._wp / x
-          y = hpi * sign(1._wp,x)  - base( inv_x )
+            ix = - 1._wp / x
+            y = hpi * sign(1._wp,x)
         end if
-    contains
-        real(wp) elemental function base( x ) result( y )
-            real(wp), intent(in) :: x
-            real(wp), parameter :: n1 = 0.97239411_wp
-            real(wp), parameter :: n2 = -0.19194795_wp
-            y = (n1 + n2 * x * x) * x
-        end function
+        y = y + (n1 + n2 * ix *ix) * ix
     end function
     
 end module
