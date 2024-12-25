@@ -11,7 +11,7 @@ module fast_dotp
     private
     
     public :: fprod, fprod_kahan
-    integer, parameter :: chunk64 = 32
+    integer, parameter :: chunk64 = 64
     integer, parameter :: chunk32 = 64
     
     interface fprod

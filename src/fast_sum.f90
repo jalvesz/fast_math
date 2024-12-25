@@ -12,7 +12,7 @@ module fast_sum
   private
 
   public :: fsum, fsum_kahan
-  integer, parameter :: chunk64 = 32
+  integer, parameter :: chunk64 = 64
   integer, parameter :: chunk32 = 64
   
   interface fsum
