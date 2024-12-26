@@ -43,242 +43,191 @@ ford ford.yml
 * Polish autodoc
 
 # Elapsed time examples and precision
-Warning: The following values are just references as to see how different can they be between different compilers. Actual speed-ups(downs) should be measured under the true use conditions to account for (lack-off) inlinement, etc etc. Results obtained using a Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz   2.89 GHz.
+Warning: The following values are just references as to see how different can they be between different compilers. Actual speed-ups(downs) should be measured under the true use conditions to account for (lack-off) inlinement, etc etc.
 <details>
-<summary>(Click to unfold) WSL2 gfortran 13.2 > fpm test --flag "-cpp -O3 -march=native -flto"</summary>
+<summary>(Click to unfold) Windows gfortran 14.1 > fpm test --flag "-O3 -march=native -mtune=native"</summary>
+CPU: Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz   1.99 GHz
 
 |      sum r32 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           1.0300 |     1.00 |      3.1511E-06 |
-|        kahan |           0.1200 |     8.58 |      9.5367E-08 |
-|        chunk |           0.0900 |    11.44 |      1.0824E-07 |
+|    intrinsic |           1.2100 |     1.00 |      3.3794E-06 |
+|        kahan |           0.1800 |     6.72 |      1.0425E-07 |
+|        chunk |           0.1100 |    11.00 |      1.1265E-07 |
  
 |      sum r64 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           1.2100 |     1.00 |      5.6974E-15 |
-|        kahan |           0.4300 |     2.81 |      1.3278E-16 |
-|        chunk |           0.1100 |    11.00 |      2.3359E-16 |
+|    intrinsic |           1.3000 |     1.00 |      5.9269E-15 |
+|        kahan |           0.3100 |     4.19 |      1.7286E-16 |
+|        chunk |           0.1500 |     8.67 |      2.1416E-16 |
  
 | sum r32 mask | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           1.2300 |     1.00 |      1.6180E-06 |
-|        kahan |           4.3400 |     0.28 |      8.3327E-08 |
-|        chunk |           0.3800 |     3.24 |      8.8394E-08 |
+|    intrinsic |           4.1250 |     1.00 |      1.5687E-06 |
+|        kahan |           0.1600 |    25.78 |      9.1493E-08 |
+|        chunk |           0.1600 |    25.78 |      8.8453E-08 |
  
 | sum r64 mask | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           3.8600 |     1.00 |      2.9463E-15 |
-|        kahan |           4.1950 |     0.92 |      6.8723E-17 |
-|        chunk |           0.4200 |     9.19 |      1.1879E-16 |
+|    intrinsic |           4.0350 |     1.00 |      2.9428E-15 |
+|        kahan |           0.3750 |    10.76 |      1.2179E-16 |
+|        chunk |           0.2450 |    16.47 |      1.2768E-16 |
  
 |      dot r32 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           1.2100 |     1.00 |      3.2994E-06 |
-|        kahan |           0.2300 |     5.26 |      9.8348E-08 |
-|        chunk |           0.1200 |    10.08 |      1.1307E-07 |
- 
+|    intrinsic |           1.0600 |     1.00 |      3.2735E-06 |
+|        kahan |           0.1500 |     7.07 |      9.8348E-08 |
+|        chunk |           0.1000 |    10.60 |      1.1587E-07 |
+
 |      dot r64 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           1.1900 |     1.00 |      5.9648E-15 |
-|        kahan |           0.4400 |     2.70 |      1.2812E-16 |
-|        chunk |           0.0900 |    13.22 |      2.2760E-16 |
+|    intrinsic |           1.2100 |     1.00 |      5.8091E-15 |
+|        kahan |           0.3300 |     3.67 |      1.8407E-16 |
+|        chunk |           0.2000 |     6.05 |      2.0528E-16 |
 
 |        trigo | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|     fsin r32 |           0.5280 |     7.54 |      3.0972E-07 | 
-|     fsin r64 |           0.9320 |     8.76 |      3.9779E-16 | 
-|    facos r32 |           0.3080 |    20.87 |      2.9135E-05 | 
-|    facos r64 |           0.5960 |    15.90 |      2.1557E-14 | 
+|     fsin r32 |           2.8840 |    13.82 |      3.4749E-07 |
+|     fsin r64 |           3.1040 |    12.17 |      4.0784E-16 |
+|    facos r32 |           1.6600 |    28.64 |      2.9135E-05 | 
+|    facos r64 |           1.6800 |     6.89 |      2.9274E-14 | 
+|    fatan r32 |           1.6720 |    23.36 |      1.7730E-06 | 
+|    fatan r64 |           2.5120 |     3.94 |      6.6869E-06 | 
 
 |       hyperb | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    ftanh r32 |           1.7280 |    10.07 |      7.4200E-08 | 
-|    ftanh r64 |           1.9360 |     9.32 |      1.3282E-09 | 
-|     ferf r32 |           0.4760 |    31.71 |      9.6432E-08 | 
-|     ferf r64 |           0.7640 |    18.42 |      9.6298E-08 | 
+|    ftanh r32 |           2.1640 |     8.61 |      5.9480E-08 | 
+|    ftanh r64 |           2.3480 |     7.16 |      1.3282E-09 | 
+|     ferf r32 |           2.3600 |    27.21 |      7.9573E-08 | 
+|     ferf r64 |           4.1200 |    15.60 |      9.6298E-08 | 
 
 |        rsqrt | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|   frsqrt r32 |           0.3480 |     1.06 |      9.4399E-04 | 
-|   frsqrt r64 |           0.6320 |     2.23 |      8.6268E-04 | 
+|   frsqrt r32 |           1.7720 |     0.26 |      9.4039E-04 | 
+|   frsqrt r64 |           2.2280 |     0.64 |      8.9297E-04 | 
 </details>
 
 <details>
-<summary>(Click to unfold) WSL2 nvfortran 23.9 > fpm test --flag "-Mpreprocess -fast -Minline"</summary>
+<summary>(Click to unfold) Windows ifx 2025.0.4 > fpm test --flag "/O3 /Qxhost"</summary>
+CPU: Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz   1.99 GHz
 
 |      sum r32 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.1000 |     1.00 |      1.1295E-07 |
-|        kahan |           1.2500 |     0.08 |      9.8169E-08 |
-|        chunk |           0.0700 |     1.43 |      7.0930E-08 |
+|    intrinsic |           0.4300 |     1.00 |      3.8308E-07 |
+|        kahan |           0.1700 |     2.53 |      6.0938E-08 |
+|        chunk |           0.0100 |    43.00 |      6.0938E-08 |
  
 |      sum r64 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.1400 |     1.00 |      3.8969E-16 |
-|        kahan |           1.6300 |     0.09 |      1.2623E-16 |
-|        chunk |           0.2500 |     0.56 |      1.8996E-16 |
+|    intrinsic |           0.3500 |     1.00 |      1.5061E-15 |
+|        kahan |           0.1800 |     1.94 |      1.3033E-16 |
+|        chunk |           0.0200 |    17.50 |      1.3886E-16 |
  
 | sum r32 mask | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.1700 |     1.00 |      2.0742E-07 |
-|        kahan |           5.5650 |     0.03 |      8.1956E-08 |
-|        chunk |           0.2550 |     0.67 |      5.8889E-08 |
+|    intrinsic |           0.3000 |     1.00 |      2.0369E-07 |
+|        kahan |           0.2200 |     1.36 |      5.2360E-08 |
+|        chunk |           0.1750 |     1.71 |      5.2515E-08 |
  
 | sum r64 mask | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.3600 |     1.00 |      3.8136E-16 |
-|        kahan |           5.7750 |     0.06 |      6.2839E-17 |
-|        chunk |           0.4400 |     0.82 |      8.5598E-17 |
+|    intrinsic |           0.3500 |     1.00 |      3.7423E-16 |
+|        kahan |           0.2900 |     1.21 |      8.3862E-17 |
+|        chunk |           0.2800 |     1.25 |      9.4422E-17 |
  
 |      dot r32 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.1400 |     1.00 |      1.1426E-07 |
-|        kahan |           1.9700 |     0.07 |      9.7811E-08 |
-|        chunk |           0.1700 |     0.82 |      7.1764E-08 |
+|    intrinsic |           0.3400 |     1.00 |      3.9539E-07 |
+|        kahan |           0.1600 |     2.12 |      6.7639E-08 |
+|        chunk |           0.1600 |     2.12 |      6.6906E-08 |
  
 |      dot r64 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.2400 |     1.00 |      3.9246E-16 |
-|        kahan |           1.8700 |     0.13 |      1.3178E-16 |
-|        chunk |           0.4100 |     0.59 |      1.9129E-16 |
+|    intrinsic |           0.7100 |     1.00 |      1.4730E-15 |
+|        kahan |           0.1500 |     4.73 |      1.2270E-16 |
+|        chunk |           0.1700 |     4.18 |      1.2459E-16 |
 
 |        trigo | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|     fsin r32 |           0.0160 |   726.00 |      1.0325E-07 | 
-|     fsin r64 |           0.0280 |   388.86 |      5.0118E-17 | 
-|    facos r32 |           0.0120 |   466.67 |      1.0563E-06 | 
-|    facos r64 |           0.0200 |   390.60 |      3.7996E-15 | 
+|     fsin r32 |           3.0960 |     0.26 |      2.0412E-08 | 
+|     fsin r64 |           2.7080 |     1.01 |      3.5190E-17 | 
+|    facos r32 |           1.6440 |     0.46 |      1.3946E-05 | 
+|    facos r64 |           1.7560 |     1.51 |      2.0708E-11 | 
+|    fatan r32 |           2.6880 |     0.28 |      4.4950E-06 | 
+|    fatan r64 |           1.9000 |     1.73 |      6.6869E-06 | 
 
 |       hyperb | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    ftanh r32 |           0.0240 |   676.67 |      5.3264E-08 | 
-|    ftanh r64 |           0.0080 |  1595.00 |      1.3282E-09 | 
-|     ferf r32 |           0.0040 |  4851.00 |      9.1205E-08 | 
-|     ferf r64 |           0.0320 |   549.62 |      9.6298E-08 | 
+|    ftanh r32 |           2.3200 |     0.48 |      1.0284E-08 | 
+|    ftanh r64 |           2.3080 |     2.19 |      1.3282E-09 | 
+|     ferf r32 |           3.3160 |     0.23 |      7.5974E-07 | 
+|     ferf r64 |           2.9760 |     0.89 |      9.6298E-08 | 
 
 |        rsqrt | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|   frsqrt r32 |          16.5480 |     0.02 |      9.4387E-04 | 
-|   frsqrt r64 |          15.8280 |     0.09 |      8.6745E-04 | 
-
+|   frsqrt r32 |           1.7280 |     0.21 |      9.4033E-04 | 
+|   frsqrt r64 |           1.6520 |     0.90 |      8.7360E-04 |
 </details>
 
 <details>
-<summary>(Click to unfold) WSL2 ifort 2021.10.0 > fpm test --flag "-fpp -O3 -xHost -ipo"</summary>
+<summary>(Click to unfold) WSL2 nvfortran 24.3 > fpm test --flag "-Mpreprocess -fast"</summary>
+CPU: Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz   1.99 GHz
 
 |      sum r32 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.0700 |     1.00 |      6.2262E-08 |
-|        kahan |           0.2400 |     0.29 |      9.4564E-08 |
-|        chunk |           0.1000 |     0.70 |      7.0930E-08 |
+|    intrinsic |           0.2100 |     1.00 |      1.1295E-07 |
+|        kahan |           0.3200 |     0.66 |      9.8169E-08 |
+|        chunk |           0.1400 |     1.50 |      7.1764E-08 |
  
 |      sum r64 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.0800 |     1.00 |      1.9862E-16 |
-|        kahan |           0.5200 |     0.15 |      1.2867E-16 |
-|        chunk |           0.1400 |     0.57 |      2.0384E-16 |
+|    intrinsic |           0.3300 |     1.00 |      3.8969E-16 |
+|        kahan |           0.3200 |     1.03 |      1.8086E-16 |
+|        chunk |           0.2200 |     1.50 |      9.0372E-17 |
  
 | sum r32 mask | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.2000 |     1.00 |      2.0568E-07 |
-|        kahan |           0.2150 |     0.93 |      7.7122E-08 |
-|        chunk |           0.1450 |     1.38 |      6.7770E-08 |
+|    intrinsic |           0.2400 |     1.00 |      2.0742E-07 |
+|        kahan |           0.3050 |     0.79 |      8.9645E-08 |
+|        chunk |           0.1550 |     1.55 |      5.8651E-08 |
  
 | sum r64 mask | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.2150 |     1.00 |      1.9040E-16 |
-|        kahan |           0.4400 |     0.49 |      7.0610E-17 |
-|        chunk |           0.3700 |     0.58 |      8.5154E-17 |
+|    intrinsic |           0.4150 |     1.00 |      3.8136E-16 |
+|        kahan |           0.5000 |     0.83 |      1.2734E-16 |
+|        chunk |           0.2850 |     1.46 |      2.4869E-17 |
  
 |      dot r32 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.0700 |     1.00 |      6.2031E-08 |
-|        kahan |           0.2100 |     0.33 |      1.0544E-07 |
-|        chunk |           0.0500 |     1.40 |      7.1526E-08 |
+|    intrinsic |           0.2500 |     1.00 |      1.1426E-07 |
+|        kahan |           0.2600 |     0.96 |      9.7811E-08 |
+|        chunk |           0.1400 |     1.79 |      7.2122E-08 |
  
 |      dot r64 | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    intrinsic |           0.2200 |     1.00 |      6.3782E-16 |
-|        kahan |           0.4600 |     0.48 |      2.4047E-16 |
-|        chunk |           0.1200 |     1.83 |      1.8829E-16 |
+|    intrinsic |           0.2600 |     1.00 |      3.9246E-16 |
+|        kahan |           0.3800 |     0.68 |      1.9229E-16 |
+|        chunk |           0.1900 |     1.37 |      9.0927E-17 |
 
 |        trigo | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|     fsin r32 |           0.3560 |     1.26 |      1.9746E-07 | 
-|     fsin r64 |           0.9280 |     1.38 |      7.5661E-17 | 
-|    facos r32 |           0.3200 |     2.01 |      3.0743E-06 | 
-|    facos r64 |           0.6520 |     3.36 |      6.3642E-15 | 
+|     fsin r32 |           0.0600 |   190.80 |      1.0325E-07 | 
+|     fsin r64 |           0.0320 |   357.25 |      5.0118E-17 | 
+|    facos r32 |           0.0280 |   221.43 |      1.0563E-06 | 
+|    facos r64 |           0.0160 |   546.75 |      3.7996E-15 | 
+|    fatan r32 |           0.0240 |   300.50 |      5.4993E-06 | 
+|    fatan r64 |           0.0400 |   244.40 |      6.6869E-06 | 
 
 |       hyperb | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|    ftanh r32 |           0.3960 |     3.70 |      1.1537E-08 | 
-|    ftanh r64 |           0.6760 |     5.17 |      1.3282E-09 | 
-|     ferf r32 |           0.3360 |     2.50 |      1.0924E-07 | 
-|     ferf r64 |           0.8440 |     2.18 |      9.6298E-08 | 
+|    ftanh r32 |           0.0280 |   510.71 |      5.5308E-08 | 
+|    ftanh r64 |           0.0360 |   348.56 |      1.3282E-09 | 
+|     ferf r32 |           0.0400 |   496.90 |      9.1205E-08 | 
+|     ferf r64 |           0.0360 |   532.44 |      9.6298E-08 | 
 
 |        rsqrt | <time> [ns/eval] | Speed-Up | relative error  |
 |--------------|------------------|----------|-----------------|
-|   frsqrt r32 |           0.2600 |     1.31 |      9.4032E-04 | 
-|   frsqrt r64 |           0.6360 |     2.27 |      8.7360E-04 | 
-</details>
-
-<details>
-<summary>(Click to unfold) Windows ifx 2023.2.0 > fpm test --flag "-fpp -O3 -xHost -ipo"</summary>
-
-|      sum r32 | <time> [ns/eval] | Speed-Up | relative error  |
-|--------------|------------------|----------|-----------------|
-|    intrinsic |           0.3200 |     1.00 |      8.4376E-07 |
-|        kahan |           1.0300 |     0.31 |      8.7321E-08 |
-|        chunk |           0.4800 |     0.67 |      8.7082E-08 |
- 
-|      sum r64 | <time> [ns/eval] | Speed-Up | relative error  |
-|--------------|------------------|----------|-----------------|
-|    intrinsic |           1.1200 |     1.00 |      5.7371E-15 |
-|        kahan |           0.9400 |     1.19 |      1.9507E-16 |
-|        chunk |           0.5600 |     2.00 |      1.9418E-16 |
- 
-| sum r32 mask | <time> [ns/eval] | Speed-Up | relative error  |
-|--------------|------------------|----------|-----------------|
-|    intrinsic |           2.2700 |     1.00 |      1.5584E-06 |
-|        kahan |           4.4750 |     0.51 |      9.1434E-08 |
-|        chunk |           4.7200 |     0.48 |      8.7559E-08 |
- 
-| sum r64 mask | <time> [ns/eval] | Speed-Up | relative error  |
-|--------------|------------------|----------|-----------------|
-|    intrinsic |           2.1750 |     1.00 |      2.9075E-15 |
-|        kahan |           4.7550 |     0.46 |      1.0636E-16 |
-|        chunk |           4.0250 |     0.54 |      1.0525E-16 |
- 
-|      dot r32 | <time> [ns/eval] | Speed-Up | relative error  |
-|--------------|------------------|----------|-----------------|
-|    intrinsic |           0.2600 |     1.00 |      7.9530E-07 |
-|        kahan |           1.3800 |     0.19 |      6.8307E-08 |
-|        chunk |           0.4900 |     0.53 |      6.9737E-08 |
- 
-|      dot r64 | <time> [ns/eval] | Speed-Up | relative error  |
-|--------------|------------------|----------|-----------------|
-|    intrinsic |           0.6200 |     1.00 |      2.9848E-15 |
-|        kahan |           1.4200 |     0.44 |      1.8197E-16 |
-|        chunk |           0.5800 |     1.07 |      1.8330E-16 |
-
-|        trigo | <time> [ns/eval] | Speed-Up | relative error  |
-|--------------|------------------|----------|-----------------|
-|     fsin r32 |           3.4640 |     0.47 |      1.3924E-07 | 
-|     fsin r64 |           3.2320 |     1.31 |      1.0296E-15 | 
-|    facos r32 |           1.3960 |     5.22 |      3.1710E-05 | 
-|    facos r64 |           1.4080 |     6.28 |      5.2928E-13 | 
-
-|       hyperb | <time> [ns/eval] | Speed-Up | relative error  |
-|--------------|------------------|----------|-----------------|
-|    ftanh r32 |           2.8280 |     1.22 |      2.3012E-08 | 
-|    ftanh r64 |           2.6280 |     2.97 |      1.3282E-09 | 
-|     ferf r32 |           3.8600 |     1.57 |      3.0995E-07 | 
-|     ferf r64 |           3.9600 |     5.67 |      9.6298E-08 | 
-
-|        rsqrt | <time> [ns/eval] | Speed-Up | relative error  |
-|--------------|------------------|----------|-----------------|
-|   frsqrt r32 |           1.6640 |     0.19 |      9.4038E-04 | 
-|   frsqrt r64 |           1.4320 |     0.96 |      8.7360E-04 |
+|   frsqrt r32 |          16.3120 |     0.03 |      9.4387E-04 | 
+|   frsqrt r64 |          16.7680 |     0.11 |      8.6745E-04 |
 </details>
 
 # Acknowledgement
