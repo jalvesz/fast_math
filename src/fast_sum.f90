@@ -48,16 +48,16 @@ module fast_sum
       real(wp) :: sout
       ! --
       real(wp) :: abatch(chunk)
-      integer :: i, dr, rr
+      integer :: i, n, r
       ! -----------------------------
-      dr = size(a)/chunk
-      rr = size(a) - dr*chunk
+      n  = size(a)
+      r = mod(n,chunk)
       
-      abatch(:) = 0.0_wp
-      do i = 1, dr
-        abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)
+      abatch(1:r)       = a(1:r)
+      abatch(r+1:chunk) = 0._wp
+      do i = r+1, n-r, chunk
+       abatch(1:chunk) = abatch(1:chunk) + a(i:i+chunk-1)
       end do
-      abatch(1:rr) = abatch(1:rr) + a(size(a)-rr+1:size(a))
       
       sout = 0.0_wp
       do i = 1, chunk/2
@@ -72,16 +72,16 @@ module fast_sum
       real(wp) :: sout
       ! --
       real(wp) :: abatch(chunk)
-      integer :: i, dr, rr
+      integer :: i, n, r
       ! -----------------------------
-      dr = size(a)/chunk
-      rr = size(a) - dr*chunk
+      n  = size(a)
+      r = mod(n,chunk)
       
-      abatch(:) = 0.0_wp
-      do i = 1, dr
-        abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)
+      abatch(1:r)       = a(1:r)
+      abatch(r+1:chunk) = 0._wp
+      do i = r+1, n-r, chunk
+       abatch(1:chunk) = abatch(1:chunk) + a(i:i+chunk-1)
       end do
-      abatch(1:rr) = abatch(1:rr) + a(size(a)-rr+1:size(a))
 
       sout = 0.0_wp
       do i = 1, chunk/2
@@ -97,17 +97,17 @@ module fast_sum
       real(wp) :: sout
       ! --
       real(wp) :: abatch(chunk)
-      integer :: i, dr, rr
+      integer :: i, n, r
       ! -----------------------------
-      dr = size(a)/chunk
-      rr = size(a) - dr*chunk
+      n  = size(a)
+      r = mod(n,chunk)
       
-      abatch = 0.0_wp
-      do i = 1, dr
-        abatch(1:chunk) = abatch(1:chunk) + merge( 0.0_wp , a(chunk*i-chunk+1:chunk*i) , mask(chunk*i-chunk+1:chunk*i) )
+      abatch(1:r)       = merge( 0.0_wp , a(1:r) , mask(1:r) )
+      abatch(r+1:chunk) = 0._wp
+      do i = r+1, n-r, chunk
+       abatch(1:chunk) = abatch(1:chunk) + merge( 0.0_wp , a(i:i+chunk-1), mask(i:i+chunk-1) )
       end do
-      abatch(1:rr) = abatch(1:rr) + merge( 0.0_wp , a(size(a)-rr+1:size(a)) , mask(size(a)-rr+1:size(a)) )
-
+      
       sout = 0.0_wp
       do i = 1, chunk/2
         sout = sout + abatch(i)+abatch(chunk/2+i)
@@ -122,16 +122,16 @@ module fast_sum
       real(wp) :: sout
       ! --
       real(wp) :: abatch(chunk)
-      integer :: i, dr, rr
+      integer :: i, n, r
       ! -----------------------------
-      dr = size(a)/chunk
-      rr = size(a) - dr*chunk
+      n  = size(a)
+      r = mod(n,chunk)
       
-      abatch = 0.0_wp
-      do i = 1, dr
-        abatch(1:chunk) = abatch(1:chunk) + merge( 0.0_wp , a(chunk*i-chunk+1:chunk*i) , mask(chunk*i-chunk+1:chunk*i) )
+      abatch(1:r)       = merge( 0.0_wp , a(1:r) , mask(1:r) )
+      abatch(r+1:chunk) = 0._wp
+      do i = r+1, n-r, chunk
+       abatch(1:chunk) = abatch(1:chunk) + merge( 0.0_wp , a(i:i+chunk-1), mask(i:i+chunk-1) )
       end do
-      abatch(1:rr) = abatch(1:rr) + merge( 0.0_wp , a(size(a)-rr+1:size(a)) , mask(size(a)-rr+1:size(a)) )
 
       sout = 0.0_wp
       do i = 1, chunk/2
@@ -147,16 +147,17 @@ module fast_sum
       ! --
       real(wp) :: sbatch(chunk)
       real(wp) :: cbatch(chunk)
-      integer :: i, dr, rr
+      integer :: i, n, r
       ! -----------------------------
-      dr = size(a)/(chunk)
-      rr = size(a) - dr*chunk     
-      sbatch = 0.0_wp
+      n  = size(a)
+      r = mod(n,chunk)
+
+      sbatch(1:r) = a(1:r)
+      sbatch(r+1:chunk)  = 0.0_wp
       cbatch = 0.0_wp
-      do i = 1, dr
-        call vkahans( a(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
-      end do
-      call vkahans( a(size(a)-rr+1:size(a)) , sbatch(1:rr) , cbatch(1:rr) )      
+      do i = r+1, n-r, chunk
+        call vkahans( a(i:i+chunk-1) , sbatch(1:chunk) , cbatch(1:chunk) )
+      end do  
       
       sout = 0.0_wp
       do i = 1,chunk
@@ -172,16 +173,17 @@ module fast_sum
       ! --
       real(wp) :: sbatch(chunk)
       real(wp) :: cbatch(chunk)
-      integer :: i, dr, rr
+      integer :: i, n, r
       ! -----------------------------
-      dr = size(a)/(chunk)
-      rr = size(a) - dr*chunk     
-      sbatch = 0.0_wp
+      n  = size(a)
+      r = mod(n,chunk)
+
+      sbatch(1:r) = a(1:r)
+      sbatch(r+1:chunk)  = 0.0_wp
       cbatch = 0.0_wp
-      do i = 1, dr
-        call vkahans( a(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
-      end do
-      call vkahans( a(size(a)-rr+1:size(a)) , sbatch(1:rr) , cbatch(1:rr) )      
+      do i = r+1, n-r, chunk
+        call vkahans( a(i:i+chunk-1) , sbatch(1:chunk) , cbatch(1:chunk) )
+      end do    
       
       sout = 0.0_wp
       do i = 1,chunk
@@ -198,16 +200,17 @@ module fast_sum
       ! --
       real(wp) :: sbatch(chunk)
       real(wp) :: cbatch(chunk)
-      integer :: i, j, dr, rr
+      integer :: i, n, r
       ! -----------------------------
-      dr = size(a)/(chunk)
-      rr = size(a) - dr*chunk     
-      sbatch = 0.0_wp
+      n  = size(a)
+      r = mod(n,chunk)
+
+      sbatch(1:r) = merge( 0.0_wp , a(1:r) , mask(1:r) )
+      sbatch(r+1:chunk)  = 0.0_wp
       cbatch = 0.0_wp
-      do i = 1, dr
-        call vkahans_m( a(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk), mask(chunk*i-chunk+1:chunk*i) )
-      end do
-      call vkahans_m( a(size(a)-rr+1:size(a)) , sbatch(1:rr) , cbatch(1:rr), mask(size(a)-rr+1:size(a)) )
+      do i = r+1, n-r, chunk
+        call vkahans_m( a(i:i+chunk-1) , sbatch(1:chunk) , cbatch(1:chunk), mask(i:i+chunk-1) )
+      end do 
 
       sout = 0.0_wp
       do i = 1,chunk
@@ -224,16 +227,17 @@ module fast_sum
       ! --
       real(wp) :: sbatch(chunk)
       real(wp) :: cbatch(chunk)
-      integer :: i, j, dr, rr
+      integer :: i, n, r
       ! -----------------------------
-      dr = size(a)/(chunk)
-      rr = size(a) - dr*chunk     
-      sbatch = 0.0_wp
+      n  = size(a)
+      r = mod(n,chunk)
+
+      sbatch(1:r) = merge( 0.0_wp , a(1:r) , mask(1:r) )
+      sbatch(r+1:chunk)  = 0.0_wp
       cbatch = 0.0_wp
-      do i = 1, dr
-        call vkahans_m( a(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk), mask(chunk*i-chunk+1:chunk*i) )
-      end do
-      call vkahans_m( a(size(a)-rr+1:size(a)) , sbatch(1:rr) , cbatch(1:rr), mask(size(a)-rr+1:size(a)) )
+      do i = r+1, n-r, chunk
+        call vkahans_m( a(i:i+chunk-1) , sbatch(1:chunk) , cbatch(1:chunk), mask(i:i+chunk-1) )
+      end do 
 
       sout = 0.0_wp
       do i = 1,chunk

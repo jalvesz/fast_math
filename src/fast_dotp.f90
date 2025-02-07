@@ -43,17 +43,16 @@ module fast_dotp
         real(wp) :: p
         ! --
         real(wp) :: abatch(chunk)
-        integer :: i, n, dr, rr
+        integer :: i, n, r
         ! -----------------------------
-        n  = size(a)
-        dr = n/chunk
-        rr = n - dr*chunk
-        
-        abatch(:) = 0.0_wp
-        do i = 1, dr
-          abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)*b(chunk*i-chunk+1:chunk*i)
+        n = size(a)
+        r = mod(n,chunk)
+
+        abatch(1:r)       = a(1:r)*b(1:r)
+        abatch(r+1:chunk) = 0._wp
+        do i = r+1, n-r, chunk
+         abatch(1:chunk) = abatch(1:chunk) + a(i:i+chunk-1)*b(i:i+chunk-1)
         end do
-        abatch(1:rr) = abatch(1:rr) + a(n-rr+1:n)*b(n-rr+1:n)
         
         p = 0.0_wp
         do i = 1, chunk/2
@@ -69,17 +68,16 @@ module fast_dotp
         real(wp) :: p
         ! --
         real(wp) :: abatch(chunk)
-        integer :: i, n, dr, rr
+        integer :: i, n, r
         ! -----------------------------
-        n  = size(a)
-        dr = n/chunk
-        rr = n - dr*chunk
-        
-        abatch(:) = 0.0_wp
-        do i = 1, dr
-          abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)*b(chunk*i-chunk+1:chunk*i)
+        n = size(a)
+        r = mod(n,chunk)
+
+        abatch(1:r)       = a(1:r)*b(1:r)
+        abatch(r+1:chunk) = 0._wp
+        do i = r+1, n-r, chunk
+         abatch(1:chunk) = abatch(1:chunk) + a(i:i+chunk-1)*b(i:i+chunk-1)
         end do
-        abatch(1:rr) = abatch(1:rr) + a(n-rr+1:n)*b(n-rr+1:n)
         
         p = 0.0_wp
         do i = 1, chunk/2
@@ -96,17 +94,16 @@ module fast_dotp
         real(wp) :: p
         ! --
         real(wp) :: abatch(chunk)
-        integer :: i, n, dr, rr
+        integer :: i, n, r
         ! -----------------------------
-        n  = size(a)
-        dr = n/chunk
-        rr = n - dr*chunk
-        
-        abatch(:) = 0.0_wp
-        do i = 1, dr
-          abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)*b(chunk*i-chunk+1:chunk*i)*w(chunk*i-chunk+1:chunk*i)
+        n = size(a)
+        r = mod(n,chunk)
+
+        abatch(1:r)       = a(1:r)*b(1:r)*w(1:r)
+        abatch(r+1:chunk) = 0._wp
+        do i = r+1, n-r, chunk
+         abatch(1:chunk) = abatch(1:chunk) + a(i:i+chunk-1)*b(i:i+chunk-1)*w(i:i+chunk-1)
         end do
-        abatch(1:rr) = abatch(1:rr) + a(n-rr+1:n)*b(n-rr+1:n)*w(n-rr+1:n)
         
         p = 0.0_wp
         do i = 1, chunk/2
@@ -123,17 +120,16 @@ module fast_dotp
         real(wp) :: p
         ! --
         real(wp) :: abatch(chunk)
-        integer :: i, n, dr, rr
+        integer :: i, n, r
         ! -----------------------------
-        n  = size(a)
-        dr = n/chunk
-        rr = n - dr*chunk
-        
-        abatch(:) = 0.0_wp
-        do i = 1, dr
-          abatch(1:chunk) = abatch(1:chunk) + a(chunk*i-chunk+1:chunk*i)*b(chunk*i-chunk+1:chunk*i)*w(chunk*i-chunk+1:chunk*i)
+        n = size(a)
+        r = mod(n,chunk)
+
+        abatch(1:r)       = a(1:r)*b(1:r)*w(1:r)
+        abatch(r+1:chunk) = 0._wp
+        do i = r+1, n-r, chunk
+         abatch(1:chunk) = abatch(1:chunk) + a(i:i+chunk-1)*b(i:i+chunk-1)*w(i:i+chunk-1)
         end do
-        abatch(1:rr) = abatch(1:rr) + a(n-rr+1:n)*b(n-rr+1:n)*w(n-rr+1:n)
         
         p = 0.0_wp
         do i = 1, chunk/2
@@ -150,18 +146,17 @@ module fast_dotp
         ! --
         real(wp) :: sbatch(chunk)
         real(wp) :: cbatch(chunk)
-        integer :: i, n, dr, rr
+        integer :: i, n, r
         ! -----------------------------
-        n  = size(a)
-        dr = n/chunk
-        rr = n - dr*chunk
+        n = size(a)
+        r = mod(n,chunk)
         
-        sbatch = 0.0_wp
-        cbatch = 0.0_wp
-        do i = 1, dr
-          call vkahans( a(chunk*i-chunk+1:chunk*i) * b(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
+        sbatch(1:r) = a(1:r) * b(1:r)
+        sbatch(r+1:chunk)  = 0.0_wp
+        cbatch = 0.0_wp 
+        do i = r+1, n-r, chunk
+          call vkahans( a(i:i+chunk-1) * b(i:i+chunk-1) , sbatch(1:chunk) , cbatch(1:chunk) )
         end do
-        call vkahans( a(size(a)-rr+1:size(a)) * b(size(a)-rr+1:size(a)), sbatch(1:rr), cbatch(1:rr) ) 
         
         p = 0.0_wp
         do i = 1,chunk
@@ -178,18 +173,17 @@ module fast_dotp
         ! --
         real(wp) :: sbatch(chunk)
         real(wp) :: cbatch(chunk)
-        integer :: i, n, dr, rr
+        integer :: i, n, r
         ! -----------------------------
-        n  = size(a)
-        dr = n/chunk
-        rr = n - dr*chunk
+        n = size(a)
+        r = mod(n,chunk)
         
-        sbatch = 0.0_wp
-        cbatch = 0.0_wp
-        do i = 1, dr
-          call vkahans( a(chunk*i-chunk+1:chunk*i) * b(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
+        sbatch(1:r) = a(1:r) * b(1:r)
+        sbatch(r+1:chunk)  = 0.0_wp
+        cbatch = 0.0_wp 
+        do i = r+1, n-r, chunk
+          call vkahans( a(i:i+chunk-1) * b(i:i+chunk-1) , sbatch(1:chunk) , cbatch(1:chunk) )
         end do
-        call vkahans( a(size(a)-rr+1:size(a)) * b(size(a)-rr+1:size(a)), sbatch(1:rr), cbatch(1:rr) ) 
         
         p = 0.0_wp
         do i = 1,chunk
@@ -207,19 +201,17 @@ module fast_dotp
         ! --
         real(wp) :: sbatch(chunk)
         real(wp) :: cbatch(chunk)
-        integer :: i, n, dr, rr
+        integer :: i, n, r
         ! -----------------------------
-        n  = size(a)
-        dr = n/chunk
-        rr = n - dr*chunk
+        n = size(a)
+        r = mod(n,chunk)
         
-        sbatch = 0.0_wp
+        sbatch(1:r) = a(1:r) * b(1:r) * w(1:r)
+        sbatch(r+1:chunk)  = 0.0_wp
         cbatch = 0.0_wp
-        do i = 1, dr
-          call vkahans( a(chunk*i-chunk+1:chunk*i) * b(chunk*i-chunk+1:chunk*i) * &
-                w(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
+        do i = r+1, n-r, chunk
+          call vkahans( a(i:i+chunk-1) * b(i:i+chunk-1) * w(i:i+chunk-1) , sbatch(1:chunk) , cbatch(1:chunk) )
         end do
-        call vkahans( a(size(a)-rr+1:size(a)) * b(size(a)-rr+1:size(a)) * w(size(a)-rr+1:size(a)), sbatch(1:rr), cbatch(1:rr) ) 
         
         p = 0.0_wp
         do i = 1,chunk
@@ -237,19 +229,17 @@ module fast_dotp
         ! --
         real(wp) :: sbatch(chunk)
         real(wp) :: cbatch(chunk)
-        integer :: i, n, dr, rr
+        integer :: i, n, r
         ! -----------------------------
-        n  = size(a)
-        dr = n/chunk
-        rr = n - dr*chunk
+        n = size(a)
+        r = mod(n,chunk)
         
-        sbatch = 0.0_wp
-        cbatch = 0.0_wp
-        do i = 1, dr
-          call vkahans( a(chunk*i-chunk+1:chunk*i) * b(chunk*i-chunk+1:chunk*i) * &
-                w(chunk*i-chunk+1:chunk*i) , sbatch(1:chunk) , cbatch(1:chunk) )
+        sbatch(1:r) = a(1:r) * b(1:r) * w(1:r)
+        sbatch(r+1:chunk)  = 0.0_wp
+        cbatch = 0.0_wp 
+        do i = r+1, n-r, chunk
+          call vkahans( a(i:i+chunk-1) * b(i:i+chunk-1) * w(i:i+chunk-1) , sbatch(1:chunk) , cbatch(1:chunk) )
         end do
-        call vkahans( a(size(a)-rr+1:size(a)) * b(size(a)-rr+1:size(a)) * w(size(a)-rr+1:size(a)), sbatch(1:rr), cbatch(1:rr) ) 
         
         p = 0.0_wp
         do i = 1,chunk
