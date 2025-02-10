@@ -23,11 +23,12 @@ module fast_erf
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
-        real(wp) :: abs_x
+        real(wp) :: abs_x, sqr_x
         !-------------------------------------------------
         abs_x = abs(x)
-        y = 1 - 1 / (1+ 0.278393_wp*abs_x + 0.230389_wp*abs_x**2 + 0.000972_wp*abs_x**3 + 0.078108_wp*abs_x**4)**4
-        y = y * sign(1.0_wp,x)
+        sqr_x = x**2
+        y = 1._wp - 1._wp / (1._wp+ 0.278393_wp*abs_x + 0.230389_wp*sqr_x + 0.000972_wp*abs_x*sqr_x + 0.078108_wp*sqr_x*sqr_x)**4
+        y = sign(y,x)
     end function
 
     elemental function ferf_dp( x ) result( y )
@@ -35,11 +36,12 @@ module fast_erf
         real(wp), intent(in) :: x
         real(wp) :: y
         !-- Internal Variables
-        real(wp) :: abs_x
+        real(wp) :: abs_x, sqr_x
         !-------------------------------------------------
         abs_x = abs(x)
-        y = 1 - 1 / (1+ 0.278393_wp*abs_x + 0.230389_wp*abs_x**2 + 0.000972_wp*abs_x**3 + 0.078108_wp*abs_x**4)**4
-        y = y * sign(1.0_wp,x)
+        sqr_x = x**2
+        y = 1._wp - 1._wp / (1._wp+ 0.278393_wp*abs_x + 0.230389_wp*sqr_x + 0.000972_wp*abs_x*sqr_x + 0.078108_wp*sqr_x*sqr_x)**4
+        y = sign(y,x)
     end function
     
 end module
