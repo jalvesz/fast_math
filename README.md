@@ -2,7 +2,7 @@
 # Fortran Fast math
 A collection of functions for fast number crunching using Fortran.
 
-In order to get the maximum performance of this library, compile with "-O3 -march=native" (or equivalent).
+In order to get the maximum performance of this library, compile with "-O3 -march=native -flto" (or equivalent). Note: For the elemental functions, inlinement is key to extract maximum performance. It can be achieved either by use of the `-flto`(gcc)/`-ipo`(intel) flag or using the `include` mechanism.
 
 # Available functions
 
