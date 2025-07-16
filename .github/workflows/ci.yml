@@ -10,7 +10,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         toolchain:
-          - {compiler: gcc, version: 15, flags: ['-O3 -march=native -mtune=native -flto']}
+          - {compiler: gcc, version: 13, flags: ['-O3 -march=native -mtune=native -flto']}
           - {compiler: intel, version: '2025.2', flags: ['-O3 -xhost -flto']}
           - {compiler: intel-classic, version: '2021.10', flags: ['-O3 -xhost -ipo']}
           - {compiler: nvidia-hpc, version: '25.5', flags: ['-Mpreprocess -Ofast -Minline']}
