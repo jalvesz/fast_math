@@ -52,6 +52,17 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Ensure libgfortran.5.dylib is available for fpm (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          LIB=$(find /opt/homebrew -name "libgfortran.5.dylib" 2>/dev/null | head -1)
+          if [[ -n "$LIB" ]]; then
+            mkdir -p /opt/homebrew/opt/gcc@12/lib/gcc/12
+            ln -sf "$LIB" /opt/homebrew/opt/gcc@12/lib/gcc/12/libgfortran.5.dylib
+          else
+            brew install gcc@12
+          fi
+
       - run: |
           fpm test --compiler ${{ env.FC }} --c-compiler ${{ env.CC }} --cxx-compiler ${{ env.CXX }} --flag "${{ join(matrix.toolchain.flags, ' ') }}"
     #      ${{ env.FC }} ... # environment vars FC, CC, and CXX are set
