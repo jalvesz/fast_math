@@ -19,6 +19,7 @@ jobs:
           - {os: ubuntu-latest,  compiler: gfortran,  flags: '-O3 -march=native -mtune=native -flto -ffat-lto-objects'}
           - {os: ubuntu-latest,  compiler: ifx,       flags: '-O3 -xhost'}
           - {os: ubuntu-latest,  compiler: flang-new, flags: '-O3'}
+          - {os: ubuntu-latest,  compiler: lfortran,  flags: '-O3 --realloc-lhs-arrays', fpm-version: '0.12.0'}
           - {os: ubuntu-latest,  compiler: nvfortran, flags: '-Mpreprocess -Ofast -Minline'}
           - {os: macos-latest,   compiler: gfortran,  flags: '-O3 -mcpu=native -flto -ffat-lto-objects'}
           - {os: windows-latest, compiler: gfortran,  flags: '-O3 -march=native -mtune=native -flto -ffat-lto-objects'}

@@ -29,7 +29,7 @@ subroutine scramble_sp( x )
     m = size(x)
     do i = 1, m
         call random_number(u)
-        j = 1 + FLOOR(m*u)
+        j = min(1 + FLOOR(m*u), m)
         temp = x(j)
         x(j) = x(i)
         x(i) = temp
@@ -45,7 +45,7 @@ subroutine scramble_dp( x )
     m = size(x)
     do i = 1, m
         call random_number(u)
-        j = 1 + FLOOR(m*u)
+        j = min(1 + FLOOR(m*u), m)
         temp = x(j)
         x(j) = x(i)
         x(i) = temp
@@ -63,7 +63,7 @@ subroutine scramble_spl( x , l )
     m = size(x)
     do i = 1, m
         call random_number(u)
-        j = 1 + FLOOR(m*u)
+        j = min(1 + FLOOR(m*u), m)
         temp = x(j); ltemp = l(j)
         x(j) = x(i); l(j) = l(i)
         x(i) = temp; l(i) = ltemp
@@ -81,7 +81,7 @@ subroutine scramble_dpl( x , l )
     m = size(x)
     do i = 1, m
         call random_number(u)
-        j = 1 + FLOOR(m*u)
+        j = min(1 + FLOOR(m*u), m)
         temp = x(j); ltemp = l(j)
         x(j) = x(i); l(j) = l(i)
         x(i) = temp; l(i) = ltemp
