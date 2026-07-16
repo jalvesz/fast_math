@@ -15,40 +15,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        toolchain:
-          - {compiler: gcc, version: 15, flags: ['-O3 -march=native -mtune=native -flto']}
-          - {compiler: intel, version: '2025.2', flags: ['-O3 -xhost -flto']}
-          - {compiler: intel-classic, version: '2021.10', flags: ['-O3 -xhost -ipo']}
-          - {compiler: nvidia-hpc, version: '25.5', flags: ['-Mpreprocess -Ofast -Minline']}
         include:
-          - os: ubuntu-latest
-            toolchain: {compiler: gcc, version: 12, flags: ['-O3 -march=native -mtune=native -flto']}
-            
-        exclude:
-          - os: macos-latest
-            toolchain: {compiler: intel, version: '2025.2'}
-          - os: macos-latest
-            toolchain: {compiler: nvidia-hpc, version: '25.5'}
-          - os: windows-latest
-            toolchain: {compiler: nvidia-hpc, version: '25.5'}
+          - {os: ubuntu-latest,  compiler: gfortran,  flags: '-O3 -march=native -mtune=native -flto -ffat-lto-objects'}
+          - {os: ubuntu-latest,  compiler: ifx,       flags: '-O3 -xhost'}
+          - {os: ubuntu-latest,  compiler: flang-new, flags: '-O3'}
+          - {os: ubuntu-latest,  compiler: nvfortran, flags: '-Mpreprocess -Ofast -Minline'}
+          - {os: macos-latest,   compiler: gfortran,  flags: '-O3 -mcpu=native -flto -ffat-lto-objects'}
+          - {os: windows-latest, compiler: gfortran,  flags: '-O3 -march=native -mtune=native -flto -ffat-lto-objects'}
+          - {os: windows-latest, compiler: ifx,       flags: '-O3',           fpm-version: '0.12.0'}
+          - {os: windows-latest, compiler: flang-new, flags: '-O3'}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
-      
-      - uses: fortran-lang/setup-fortran@main
-        id: setup-fortran
-        with:
-          compiler: ${{ matrix.toolchain.compiler }}
-          version: ${{ matrix.toolchain.version }}
+        uses: actions/checkout@v4
 
-      - name: Setup Fortran Package Manager
-        uses: fortran-lang/setup-fpm@v7
+      - name: Setup Fortran compiler and fpm
+        uses: gha3mi/setup-fortran-conda@latest
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          compiler: ${{ matrix.compiler }}
+          fpm-version: ${{ matrix.fpm-version }}
 
       - run: |
-          fpm test --compiler ${{ env.FC }} --c-compiler ${{ env.CC }} --cxx-compiler ${{ env.CXX }} --flag "${{ join(matrix.toolchain.flags, ' ') }}"
-    #      ${{ env.FC }} ... # environment vars FC, CC, and CXX are set
-    #      ${{ steps.setup-fortran.outputs.fc }} ... # outputs work too
+          fpm test --compiler ${{ env.FPM_FC }} --c-compiler ${{ env.FPM_CC }} --cxx-compiler ${{ env.FPM_CXX }} --flag "${{ matrix.flags }}"
