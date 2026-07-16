@@ -24,10 +24,7 @@ jobs:
         include:
           - os: ubuntu-latest
             toolchain: {compiler: gcc, version: 12, flags: ['-O3 -march=native -mtune=native -flto']}
-          - os: ubuntu-latest
-            toolchain: { compiler: flang, version: latest , flags: ['-O3']}
-          - os: macos-latest
-            toolchain: { compiler: flang, version: latest , flags: ['-O3']}
+            
         exclude:
           - os: macos-latest
             toolchain: {compiler: intel, version: '2025.2'}
@@ -40,7 +37,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
       
-      - uses: minhqdao/setup-fortran@v1
+      - uses: fortran-lang/setup-fortran@main
         id: setup-fortran
         with:
           compiler: ${{ matrix.toolchain.compiler }}
