@@ -1,6 +1,13 @@
 name: ci
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -10,13 +17,17 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         toolchain:
-          - {compiler: gcc, version: 13, flags: ['-O3 -march=native -mtune=native -flto']}
+          - {compiler: gcc, version: 15, flags: ['-O3 -march=native -mtune=native -flto']}
           - {compiler: intel, version: '2025.2', flags: ['-O3 -xhost -flto']}
           - {compiler: intel-classic, version: '2021.10', flags: ['-O3 -xhost -ipo']}
           - {compiler: nvidia-hpc, version: '25.5', flags: ['-Mpreprocess -Ofast -Minline']}
         include:
           - os: ubuntu-latest
             toolchain: {compiler: gcc, version: 12, flags: ['-O3 -march=native -mtune=native -flto']}
+          - os: ubuntu-latest
+            toolchain: { compiler: flang, version: latest , flags: ['-O3']}
+          - os: macos-latest
+            toolchain: { compiler: flang, version: latest , flags: ['-O3']}
         exclude:
           - os: macos-latest
             toolchain: {compiler: intel, version: '2025.2'}
@@ -29,7 +40,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
       
-      - uses: fortran-lang/setup-fortran@main
+      - uses: minhqdao/setup-fortran@v1
         id: setup-fortran
         with:
           compiler: ${{ matrix.toolchain.compiler }}
